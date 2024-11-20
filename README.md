@@ -1,5 +1,5 @@
 <!-- # Twist DNA Methylation Data Analysis Pipeline -->
-![](artworks/logo.png)
+![](artworks/logo.png){width="50%"}
 
 ## Overview
 
@@ -20,7 +20,7 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 | Alignment QC                               | Qualimap          |
 | QC Reporting                               | MultiQC           |
 | Differential Methylation Analysis          | EdgeR             |
-| Post processing                                           |                  ggplot2 |
+| Post processing                            |                  ggplot2 |
 
 ## Pipeline Schema
 ![](artworks/DAG.png)
@@ -102,3 +102,27 @@ User can change it directly to `conf/params.config` or add to the `nextflow run`
 1. `conf/resource.config` - for resource settings.
 2. `conf/base.config` - for base settings.
 3. `nextflow.config` - for nextflow run with default setting.
+
+## Credits
+- Main Author: 
+    - Jyotirmoy Das (@JD2112)
+- Maintainers:
+
+- Contributions:
+
+## Citation
+
+## HELP/FAQ/Troubleshooting
+
+Please check the manual for details.
+
+Please create issues on github.
+
+## License(s)
+
+GNU-3 public license - click to read details.
+
+## Acknowledgement
+
+We would like to acknowledge the **Core Facility, Faculty of Medicine and Health Sciences, Linköping University, Linköping, Sweden** and **Clinical Genomics Linköping, Science for Life Laboratory, Sweden** for their support.
+
