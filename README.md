@@ -1,4 +1,4 @@
-# Twist DNA Methylation Data Analysis Pipeline
+<!-- # Twist DNA Methylation Data Analysis Pipeline -->
 ![](artworks/logo.png)
 
 ## Overview
