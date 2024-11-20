@@ -1,5 +1,5 @@
 <!-- # Twist DNA Methylation Data Analysis Pipeline -->
-![](artworks/logo.png){width="50%"}
+![](artworks/logo.png = 250x50)
 
 ## Overview
 
