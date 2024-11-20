@@ -1,5 +1,5 @@
 <!-- # Twist DNA Methylation Data Analysis Pipeline -->
-<img src="https://github.com/JD2112/TwistNext/blob/0525eadd41d44bb068f2892a3d841dce96c85024/artworks/logo.png" width="400" >
+<img src="https://github.com/JD2112/TwistNext/blob/fda2b517fdc2c191dd959ce75d8f3e66fc4f3af3/artworks/logo.png" width="400" >
 
 ## Overview
 
