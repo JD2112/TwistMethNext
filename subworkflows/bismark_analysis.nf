@@ -10,23 +10,9 @@ workflow BISMARK_ANALYSIS {
     main:
     ch_versions = Channel.empty()
 
-    // Debug: print out the contents of the trimmed_reads channel
-    // trimmed_reads.view { meta, reads -> "Debug: Trimmed reads for BISMARK_ALIGN: ${meta.id}, Reads: ${reads}" }
-
-    // // Debug: print out the contents of the bismark_index
-    // println "Debug: Bismark index in BISMARK_ANALYSIS: ${bismark_index}"
-
     // Align reads to reference genome with Bismark
     BISMARK_ALIGN ( trimmed_reads, bismark_index )
     ch_versions = ch_versions.mix(BISMARK_ALIGN.out.versions.first())
-
-    // Debug: print out the contents of the BISMARK_ALIGN output
-    // BISMARK_ALIGN.out.bam.view { meta, bam -> "Debug: BISMARK_ALIGN output: ${meta.id}, BAM: ${bam}" }
-
-    // // Add QUALIMAP after BISMARK_ALIGN
-    // SAMTOOLS_SORT(BISMARK_DEDUPLICATE.out.bam)
-    
-    // QUALIMAP(SAMTOOLS_SORT.out.bam)
     
     BISMARK_DEDUPLICATE(BISMARK_ALIGN.out.bam)
 

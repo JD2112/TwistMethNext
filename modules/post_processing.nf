@@ -1,10 +1,10 @@
 process POST_PROCESSING {
     label 'process_medium'
 
-    conda "bioconda::r-base=4.1.0 bioconda::r-ggplot2=3.3.5 bioconda::r-dplyr=1.0.7 bioconda::r-tidyr=1.1.3"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'quay.io/biocontainers/mulled-v2-8849acf39a43cdd6c839a369a74c0adc823e2f91:ab110436faf952a33575c64dd74615a84011450b-0' :
-        'quay.io/biocontainers/mulled-v2-8849acf39a43cdd6c839a369a74c0adc823e2f91:ab110436faf952a33575c64dd74615a84011450b-0' }"
+    // conda "bioconda::r-base=4.1.0 bioconda::r-ggplot2=3.3.5 bioconda::r-dplyr=1.0.7 bioconda::r-tidyr=1.1.3"
+    // container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    //     'quay.io/biocontainers/mulled-v2-8849acf39a43cdd6c839a369a74c0adc823e2f91:ab110436faf952a33575c64dd74615a84011450b-0' :
+    //     'quay.io/biocontainers/mulled-v2-8849acf39a43cdd6c839a369a74c0adc823e2f91:ab110436faf952a33575c64dd74615a84011450b-0' }"
 
     input:
     path edger_results

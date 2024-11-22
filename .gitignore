@@ -1,4 +1,5 @@
 work/
 .nextflow*
-
 .DS_Store
+.nextflow/
+pipeline_info/
