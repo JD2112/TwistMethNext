@@ -1,4 +1,6 @@
-# Twist DNA Methylation Data Analysis Pipeline
+![](artworks/logo.png)
+
+[![DOI](https://zenodo.org/badge/891370540.svg)](https://doi.org/10.5281/zenodo.14204260)
 
 ## Overview
 
@@ -154,12 +156,14 @@ User can change it directly to `conf/params.config` or add to the `nextflow run`
 
 ## Credits
 - Main Author: 
-    - Jyotirmoy Das (@JD2112)
+    - Jyotirmoy Das ([@JD2112](https://github.com/JD2112))
 - Maintainers:
 
 - Contributions:
 
 ## Citation
+
+Das, J. (2024). TwistNext (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.14204261
 
 ## HELP/FAQ/Troubleshooting
 

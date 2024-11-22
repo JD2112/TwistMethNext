@@ -1,2 +1,4 @@
 work/
-.nextflow.*
+.nextflow*
+
+.DS_Store

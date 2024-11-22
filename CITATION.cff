@@ -5,8 +5,8 @@ authors:
     given-names: Jyotirmoy
     orcid: https://orcid.org/0000-0002-5649-4658
 title: "TwistNext"
-version: 0.1.0
+version: 1.0.0
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.11104350
-date-released: 2024-11-20
+    value: 10.5281/zenodo.14204261
+date-released: 2024-11-22
