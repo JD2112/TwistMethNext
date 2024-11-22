@@ -7,34 +7,44 @@ include { PREPARE_GENOME } from './subworkflows/prepare_genome'
 include { READ_PROCESSING } from './subworkflows/read_processing'
 include { BISMARK_ANALYSIS } from './subworkflows/bismark_analysis'
 include { QC_REPORTING } from './subworkflows/qc_reporting'
-
-// Import EdgeR module
-include { EDGER_ANALYSIS } from './modules/edger'
+include { DIFFERENTIAL_METHYLATION } from './subworkflows/differential_methylation'
 
 // Import Post-processing module
 include { POST_PROCESSING } from './modules/post_processing'
 
+// Show help message
+if (params.help) {
+    def helpMessage = file("$projectDir/conf/USAGE.md").text
+    log.info"""
+    ===========================================================================
+                  Twist DNA Methylation Data Analysis Pipeline
+    ===========================================================================
+    ${helpMessage}
+    """.stripIndent()
+    exit 0
+}
+
 // Print pipeline info
 log.info """
-BISULFITE SEQUENCING ANALYSIS PIPELINE
-=======================================
+Twist DNA Methylation Data Analysis Pipeline
+===============================================
 sample sheet : ${params.sample_sheet}
 genome       : ${params.genome_fasta}
 bismark index: ${params.bismark_index}
 outdir       : ${params.outdir}
+diff method  : ${params.diff_meth_method}
 """
 
-// Function to create a channel from the sample sheet
 def create_sample_channel(sample_sheet) {
     return Channel
-        .fromPath(sample_sheet, checkIfExists: true)
+        .fromPath(sample_sheet)
         .splitCsv(header:true)
         .map { row -> 
-            if (!(row.containsKey('sample_id') && row.containsKey('group') && row.containsKey('read1'))) {
-                error "Sample sheet must contain 'sample_id', 'group', and 'read1' columns: ${row}"
-            }
-            def meta = [id: row.sample_id, group: row.group]
-            def reads = row.containsKey('read2') ? [file(row.read1), file(row.read2)] : file(row.read1)
+            def meta = [
+                id: row.sample_id, 
+                single_end: row.containsKey('read2') ? false : true
+            ]
+            def reads = meta.single_end ? [file(row.read1)] : [file(row.read1), file(row.read2)]
             return [meta, reads]
         }
 }
@@ -45,9 +55,6 @@ workflow {
     log.info "Creating sample channel from: ${params.sample_sheet}"
     ch_samples = create_sample_channel(params.sample_sheet)
     
-    // Debug: print out the contents of the sample channel
-    //ch_samples.view { meta, reads -> "Sample: ${meta.id}, Group: ${meta.group}, Reads: ${reads}" }
-
     // Genome preparation
     if (!params.bismark_index) {
         ch_genome = Channel.fromPath(params.genome_fasta, checkIfExists: true)
@@ -59,9 +66,10 @@ workflow {
 
     // Read processing
     READ_PROCESSING(ch_samples)
+    READ_PROCESSING.out.trimmed_reads.view { meta, reads -> "Trimmed: ${meta.id}, Reads: ${reads}" }
 
-    // Bismark analysis
-    BISMARK_ANALYSIS(READ_PROCESSING.out.trimmed_reads, ch_index)
+        // Bismark analysis
+    BISMARK_ANALYSIS(READ_PROCESSING.out.trimmed_reads, ch_index.collect())
 
     // QC reporting
     QC_REPORTING(
@@ -74,22 +82,17 @@ workflow {
         BISMARK_ANALYSIS.out.qualimap_results
     )
 
-    // Collect all coverage files for EdgeR analysis
-    ch_coverage_files = BISMARK_ANALYSIS.out.coverage_files
-        .map { meta, file -> file }
-        .collect()
-
-    // EdgeR Analysis
-    EDGER_ANALYSIS(
-        ch_coverage_files,
-        params.sample_sheet,
+    // Differential Methylation Analysis
+    DIFFERENTIAL_METHYLATION(
+        BISMARK_ANALYSIS.out.coverage_files,
+        file(params.sample_sheet),
         params.compare_str,
         params.coverage_threshold
     )
 
     // Post-processing
     POST_PROCESSING(
-        EDGER_ANALYSIS.out.results,
+        DIFFERENTIAL_METHYLATION.out.results,
         params.compare_str
     )
 }

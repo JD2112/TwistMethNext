@@ -1,9 +1,59 @@
-<!-- # Twist DNA Methylation Data Analysis Pipeline -->
-<img src="https://github.com/JD2112/TwistNext/blob/d4e7b6b33bac0e1bc7e014263c34abafba160974/artworks/logo.png" width="400" >
+# Twist DNA Methylation Data Analysis Pipeline
 
 ## Overview
 
 This Nextflow pipeline is designed for the analysis of Twist NGS Methylation data, including quality control, alignment, methylation calling, differential methylation analysis, and post-processing. It integrates various tools and custom scripts to provide a comprehensive analysis workflow.
+
+## Highlights
+Here's a comprehensive overview of your methylation sequencing analysis pipeline:
+
+1. READ_PROCESSING:
+    - FASTQC: Performs quality control checks on raw sequence data.
+    - TRIM_GALORE: Trims adapters and low-quality bases from the reads.
+
+2. BISMARK_ANALYSIS:
+    - BISMARK_ALIGN: Aligns bisulfite-treated reads to a reference genome.
+    - BISMARK_DEDUPLICATE: Removes PCR duplicates from the aligned reads.
+    - SAMTOOLS_SORT: Sorts the aligned and deduplicated BAM files.
+    - SAMTOOLS_INDEX: Indexes the sorted BAM files for efficient access.
+    - QUALIMAP: Generates quality control metrics for the aligned reads.
+    - BISMARK_METHYLATION_EXTRACTOR: Extracts methylation calls from the aligned reads.
+    - BISMARK_REPORT: Generates a summary report of the Bismark alignment and methylation extraction.
+
+3. QC_REPORTING:
+    - MULTIQC: Aggregates quality control reports from various steps into a single report.
+
+4. DIFFERENTIAL_METHYLATION:
+    - EDGER_ANALYSIS: Performs differential methylation analysis using the EdgeR package.
+    - METHYLKIT_ANALYSIS: Performs differential methylation analysis using the methylKit package.
+
+5. POST_PROCESSING:
+    Generates summary statistics and visualizations of the differential methylation results.
+
+## Detailed description of each main step:
+
+1. **READ_PROCESSING:** Checks the quality of raw sequencing data and trims low-quality bases and adapters to improve downstream analysis.
+
+2. **BISMARK_ANALYSIS:** Aligns bisulfite-converted reads to a reference genome, identifies and removes PCR duplicates, sorts and indexes the aligned reads, performs quality control on alignments, and extracts methylation information from the aligned reads.
+
+3. **QC_REPORTING:** Compiles quality control metrics from various steps into a comprehensive report for easy interpretation.
+
+4. **DIFFERENTIAL_METHYLATION:**
+    - *EDGER_ANALYSIS:* 
+        - Takes coverage files, a design file, and comparison information as input.
+        - Performs differential methylation analysis using the EdgeR Bioconductor package.
+        - Outputs CSV files with differential methylation results for each group comparison.
+    *METHYLKIT_ANALYSIS:*
+        - Takes coverage files, a design file, and comparison information as input.
+        - Performs differential methylation analysis using the EdgeR Bioconductor package.
+        - Outputs CSV files with differential methylation results for each group comparison.
+
+5. **POST_PROCESSING:**
+    - Reads the EdgeR results and generates:
+    - Summary statistics (total DMRs, hyper/hypomethylated regions, significant DMRs)
+    - Volcano plot (visualizing fold change vs. significance)
+    - MA plot (visualizing intensity vs. fold change)
+    - Outputs summary statistics CSV, visualization plots, and version information.
 
 ## Features
 
@@ -14,16 +64,17 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 | Adapter sequence trimming                  | Trim Galore       |
 | Align Reads                                | Bismark (bowtie2) |
 | Deduplicate Alignments                     | Bismark           |
+| Sort and indexing                          | Samtools          |
 | Extract Methylation Calls                  | Bismark           |
 | Sample Report                              | Bismark           |
 | Summary Report                             | Bismark           |
 | Alignment QC                               | Qualimap          |
 | QC Reporting                               | MultiQC           |
-| Differential Methylation Analysis          | EdgeR             |
-| Post processing                            |                  ggplot2 |
+| Differential Methylation Analysis          | EdgeR/MethylKit   |
+| Post processing                            | ggplot2           |
 
 ## Pipeline Schema
-![](artworks/DAG.png)
+![](artworks/workflow_dag_color.png)
 
 ## Requirements
 
@@ -34,17 +85,22 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 ## Usage
 
 ```
-nextflow run https://github.com/jd21/TwistNext \
-    -r main \
-    -profile [docker, singularity] \
-    --sample_sheet Sample_sheet.csv \
-    --genome_fasta <PATH/TO/Reference Genome/hg38.fa> \
-    --output results
+nextflow run main.nf \
+    -profile singularity \
+    --sample_sheet Sample_sheet_twist.csv \
+    --genome_fasta /mnt/SD2/Jyotirmoys/JD/Scripts/MyScripts/JDCo/DNAm/DNAm-NF2/data/reference_genome/hg38/hg38.fa \ 
+    --diff_meth_method edger \
+    --outdir /mnt/SD3/test_twistNext_dagTest_edgeR 
 
 ```
 
+## HELP
+
+```
+nextflow run main.nf --help --outdir .
+```
+
 ## Input
-- Reference genome in FASTA format
 - Sample sheet (CSV format) with sample information
 
 `Sample_sheet.csv`:
@@ -63,26 +119,19 @@ nextflow run https://github.com/jd21/TwistNext \
 ### Required parameters
 
 - `--sample_sheet` (required) - provide the `sample_sheet.csv` same format as described above.
+- `--genome_fasta` or `--bismark_index` (required) - provide the full path of the reference genome sequence (`.fa` or `.fasta`) or if the index files are already available, use the full path of the `bismark` index file instead of `genome_fasta`.
 
-- `--genome_fasta` (required) - provide the full path of the reference genome sequence (`.fa` or `.fasta`).
-
-- `--bismark_index` (optional) - full path of the `bismark` index file instead of `genome_fasta`.
-
-- `outdir` (required) - full path of the output directory.
 
 ### Optional parameters
 User can change it directly to `conf/params.config` or add to the `nextflow run` command.
 
+- `--outdir` (optional) - full path of the output directory. Default is `${baseDir}/process_name`.
+- `--diff_meth_method` (optional) - user can select between `EdgeR` analysis or `MethylKit` analysis for group-wise differential methylation calculation.
 - `--compare_str` (optional) - provide the string such as `Healthy_vs_Disease` (for pair-wise comparisons) or `all` (for multiple pair-wise comparisons). By default, the pipeline will calculate `all` from the `Sample_sheet.csv`.
-
 - `--coverage_threshold` (optional) - for `EdgeR` calculation, user can set their own `coverage_threshold`. Default is `10`.
-
 - `--multiqc_config` (optional) - user can configure `MultiQC` run.
-
 - `--multiqc_title` (optional) - user can provide `MultiQC` title.
-
 - `--post_processing` (optional) - <boolean> Default is `true` to run the post-processing steps. Can be set `false` to avoid it.
-
 - `--qualimap_args` (optional) - can use [qualimap arguments](from http://qualimap.conesalab.org/doc_html/command_line.html)
 
 ### Default Bismark Alignment with Bowtie2
@@ -125,4 +174,3 @@ GNU-3 public license - click to read details.
 ## Acknowledgement
 
 We would like to acknowledge the **Core Facility, Faculty of Medicine and Health Sciences, Linköping University, Linköping, Sweden** and **Clinical Genomics Linköping, Science for Life Laboratory, Sweden** for their support.
-

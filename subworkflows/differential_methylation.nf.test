@@ -1,0 +1,55 @@
+nextflow_workflow {
+
+    name "Test Workflow DIFFERENTIAL_METHYLATION"
+    script "../subworkflows/differential_methylation.nf"
+    workflow "DIFFERENTIAL_METHYLATION"
+
+    test("Should run edgeR analysis") {
+
+        when {
+            params {
+                diff_meth_method = 'edger'
+            }
+            workflow {
+                """
+                input[0] = Channel.of([ [id:'sample1'], file("${projectDir}/tests/data/methylation/sample1.cov.gz") ])
+                input[1] = file("${projectDir}/tests/data/methylation/design.csv")
+                input[2] = "all"
+                input[3] = 5
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.out.results.size() == 1
+            assert workflow.out.versions.size() == 1
+        }
+
+    }
+
+    test("Should run methylKit analysis") {
+
+        when {
+            params {
+                diff_meth_method = 'methylkit'
+            }
+            workflow {
+                """
+                input[0] = Channel.of([ [id:'sample1'], file("${projectDir}/tests/data/methylation/sample1.cov.gz") ])
+                input[1] = file("${projectDir}/tests/data/methylation/design.csv")
+                input[2] = "all"
+                input[3] = 5
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.out.results.size() == 1
+            assert workflow.out.versions.size() == 1
+        }
+
+    }
+
+}

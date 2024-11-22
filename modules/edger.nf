@@ -1,10 +1,10 @@
 process EDGER_ANALYSIS {
     label 'process_medium'
 
-    conda "bioconda::bioconductor-edger=3.34.0"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'quay.io/biocontainers/bioconductor-edger:3.34.0--r41h399db7b_0' :
-        'quay.io/biocontainers/bioconductor-edger:3.34.0--r41h399db7b_0' }"
+    // conda "bioconda::bioconductor-edger=3.34.0"
+    // container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    //     'quay.io/biocontainers/bioconductor-edger:3.34.0--r41h399db7b_0' :
+    //     'quay.io/biocontainers/bioconductor-edger:3.34.0--r41h399db7b_0' }"
 
     input:
     path coverage_files
