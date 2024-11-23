@@ -66,7 +66,7 @@ workflow {
 
     // Read processing
     READ_PROCESSING(ch_samples)
-    READ_PROCESSING.out.trimmed_reads.view { meta, reads -> "Trimmed: ${meta.id}, Reads: ${reads}" }
+    //READ_PROCESSING.out.trimmed_reads.view { meta, reads -> "Trimmed: ${meta.id}, Reads: ${reads}" }
 
         // Bismark analysis
     BISMARK_ANALYSIS(READ_PROCESSING.out.trimmed_reads, ch_index.collect())

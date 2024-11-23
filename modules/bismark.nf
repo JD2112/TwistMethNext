@@ -15,10 +15,16 @@ process BISMARK_GENOME_PREPARATION {
     script:
     """
     mkdir -p genome_dir
-    mv $genome genome_dir/
+    cp -L $genome genome_dir/
     bismark_genome_preparation --verbose genome_dir
     mkdir -p bismark_index
     mv genome_dir/* bismark_index/
+
+    # Ensure the genome file is not a symlink in the final index
+    if [ -L bismark_index/$(basename $genome) ]; then
+        rm bismark_index/$(basename $genome)
+        cp -L $genome bismark_index/
+    fi
     
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -82,7 +88,7 @@ process BISMARK_DEDUPLICATE {
     tuple val(meta), path(bam)
 
     output:
-    tuple val(meta), path("*.deduplicated.bam"), emit: bam
+    tuple val(meta), path("*.deduplicated.bam"), emit: deduplicated_bam
     tuple val(meta), path("*_deduplication_report.txt"), emit: report
     path "versions.yml"           , emit: versions
 
@@ -114,7 +120,7 @@ process BISMARK_METHYLATION_EXTRACTOR {
     //     'quay.io/biocontainers/bismark:0.23.0--hdfd78af_1' }"
 
     input:
-    tuple val(meta), path(bam)
+    tuple val(meta), path(deduplicated_bam)
 
     output:
     tuple val(meta), path("*.bedGraph.gz"), emit: bedgraph
@@ -124,7 +130,7 @@ process BISMARK_METHYLATION_EXTRACTOR {
 
     script:
     """
-    bismark_methylation_extractor --bedGraph --gzip $bam
+    bismark_methylation_extractor --bedGraph --gzip $deduplicated_bam
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         bismark: \$( bismark --version | sed -e "s/Bismark Version: v//g" )
