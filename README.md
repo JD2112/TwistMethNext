@@ -163,7 +163,7 @@ User can change it directly to `conf/params.config` or add to the `nextflow run`
 
 ## Citation
 
-Das, J. (2024). TwistNext (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.14204261
+Das, J. (2024). TwistNext (v1.0.0). Zenodo. [https://doi.org/10.5281/zenodo.11105016](https://doi.org/10.5281/zenodo.11105016)
 
 ## HELP/FAQ/Troubleshooting
 
