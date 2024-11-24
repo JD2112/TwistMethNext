@@ -7,7 +7,7 @@ process POST_PROCESSING {
     //     'quay.io/biocontainers/mulled-v2-8849acf39a43cdd6c839a369a74c0adc823e2f91:ab110436faf952a33575c64dd74615a84011450b-0' }"
 
     input:
-    path edger_results
+    path results
     val compare_str
 
     output:
@@ -23,8 +23,8 @@ process POST_PROCESSING {
     library(dplyr)
     library(tidyr)
 
-    # Read EdgeR results
-    results <- read.csv("${edger_results}")
+    # Read EdgeR/methylKit results
+    results <- read.csv("${results}")
 
     # Generate summary statistics
     summary_stats <- results %>%
