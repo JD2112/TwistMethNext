@@ -1,6 +1,6 @@
 ![](artworks/logo.png)
 
-[![DOI](https://zenodo.org/badge/891370540.svg)](https://doi.org/10.5281/zenodo.14204260)
+[![DOI](https://zenodo.org/badge/490592846.svg)](https://doi.org/10.5281/zenodo.11105016)
 
 ## Overview
 
