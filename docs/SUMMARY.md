@@ -1,0 +1,16 @@
+# Table of contents
+
+* [Overview](README.md)
+* [Highlights](highlights.md)
+* [Description](description/README.md)
+  * [Read processing](description/read-processing.md)
+  * [Genome preparation](description/genome-preparation.md)
+  * [BISMARK\_ANALYSIS](description/bismark_analysis.md)
+* [Usage](usage/README.md)
+  * [Requirements](usage/requirements.md)
+  * [Run command](usage/run-command.md)
+  * [Input](usage/input.md)
+  * [Parameters configuration](usage/parameters-configuration.md)
+  * [Bismark Alignment with bowtie2](usage/bismark-alignment-with-bowtie2.md)
+  * [Other Configurations](usage/other-configurations.md)
+* [Credits](credits.md)

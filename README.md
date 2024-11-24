@@ -1,4 +1,21 @@
-![](artworks/logo.png)
+---
+cover: .gitbook/assets/logo.png
+coverY: 0
+layout:
+  cover:
+    visible: true
+    size: hero
+  title:
+    visible: true
+  description:
+    visible: true
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+---
 
 [![DOI](https://zenodo.org/badge/490592846.svg)](https://doi.org/10.5281/zenodo.11105016)
 [![GitBook Docs](https://img.shields.io/badge/docs-GitBook-blue?logo=gitbook)](https://jyotirmoys-organization.gitbook.io/twistnext)
