@@ -19,3 +19,6 @@ Here's a comprehensive overview of your methylation sequencing analysis pipeline
    * **EDGER\_ANALYSIS**: Performs differential methylation analysis using the EdgeR package.
    * **METHYLKIT\_ANALYSIS**: Performs differential methylation analysis using the methylKit package.
 5. **POST\_PROCESSING:** Generates summary statistics and visualizations of the differential methylation results.
+
+<figure><img src=".gitbook/assets/workflow_dag_color.png" alt=""><figcaption><p>TwistNext: DAG for EdgeR analysis</p></figcaption></figure>
+
