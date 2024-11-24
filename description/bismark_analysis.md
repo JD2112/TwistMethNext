@@ -1,2 +1,0 @@
-# BISMARK\_ANALYSIS
-
