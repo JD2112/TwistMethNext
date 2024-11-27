@@ -38,6 +38,8 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 ## Usage
 
 ```
+# when using the reference genome indexing, --genome_fasta
+
 nextflow run main.nf \
     -profile singularity \
     --sample_sheet Sample_sheet_twist.csv \
@@ -45,6 +47,15 @@ nextflow run main.nf \
     --diff_meth_method edger \
     --outdir /mnt/Results/test_twistNext_dagTest_edgeR 
 
+
+# if you already have the bisulfite genome index, --bismark_index
+
+nextflow run main.nf \
+    -profile singularity \
+    --sample_sheet Sample_sheet_twist.csv \
+    --bismark_index /data/reference_genome/hg38/ \ 
+    --diff_meth_method edger \
+    --outdir /mnt/Results/test_twistNext_dagTest_edgeR 
 ```
 
 ## HELP
