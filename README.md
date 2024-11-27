@@ -12,19 +12,21 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 
 | Step                                       | Workflow          |
 | ------------------------------------------ | ----------------- |
-| Generate Reference Genome Index (optional) | Bismark           |
-| Raw data QC                                | FastQC            |
-| Adapter sequence trimming                  | Trim Galore       |
-| Align Reads                                | Bismark (bowtie2) |
-| Deduplicate Alignments                     | Bismark           |
-| Sort and indexing                          | Samtools          |
-| Extract Methylation Calls                  | Bismark           |
-| Sample Report                              | Bismark           |
-| Summary Report                             | Bismark           |
-| Alignment QC                               | Qualimap          |
-| QC Reporting                               | MultiQC           |
-| Differential Methylation Analysis          | EdgeR/MethylKit   |
-| Post processing                            | ggplot2           |
+| Generate Reference Genome Index (optional) | [Bismark](http://felixkrueger.github.io/Bismark/bismark/genome_preparation/)           |
+| Raw data QC                                | [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)            |
+| Adapter sequence trimming                  | [Trim Galore](https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/)       |
+| Align Reads                                | [Bismark (bowtie2)](http://felixkrueger.github.io/Bismark/bismark/alignment/) |
+| Deduplicate Alignments                     | [Bismark](http://felixkrueger.github.io/Bismark/bismark/deduplication/)           |
+| Sort and indexing                          | [Samtools](http://www.htslib.org/)          |
+| Extract Methylation Calls                  | [Bismark](http://felixkrueger.github.io/Bismark/bismark/methylation_extraction/)           |
+| Sample Report                              | [Bismark](http://felixkrueger.github.io/Bismark/bismark/processing_report/)           |
+| Summary Report                             | [Bismark](http://felixkrueger.github.io/Bismark/bismark/summary_report/)           |
+| Alignment QC                               | [Qualimap](http://qualimap.conesalab.org/)          |
+| QC Reporting                               | [MultiQC](https://seqera.io/multiqc/)           |
+| Differential Methylation Analysis          | [EdgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html)/[MethylKit](https://www.bioconductor.org/packages/release/bioc/html/methylKit.html)   |
+| Post processing                            | [ggplot2](https://ggplot2.tidyverse.org/)           |
+
+
 
 ## Pipeline Schema
 ![](artworks/workflow_dag_color.png)
