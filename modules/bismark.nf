@@ -19,12 +19,6 @@ process BISMARK_GENOME_PREPARATION {
     bismark_genome_preparation --verbose genome_dir
     mkdir -p bismark_index
     mv genome_dir/* bismark_index/
-
-    # Ensure the genome file is not a symlink in the final index
-    if [ -L bismark_index/$(basename $genome) ]; then
-        rm bismark_index/$(basename $genome)
-        cp -L $genome bismark_index/
-    fi
     
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -1,6 +1,6 @@
 ![](artworks/logo.png)
 
-[![DOI](https://zenodo.org/badge/490592846.svg)](https://doi.org/10.5281/zenodo.11105016)
+[![DOI](https://zenodo.org/badge/490592846.svg)](https://doi.org/10.5281/zenodo.14204261)
 [![GitBook Docs](https://img.shields.io/badge/docs-GitBook-blue?logo=gitbook)](https://jyotirmoys-organization.gitbook.io/twistnext)
 [![GitHub Invite Collaborators](https://img.shields.io/badge/Invite-Collaborators-blue?style=for-the-badge&logo=github)](https://github.com/JD2112/TwistNext/settings/access)
 
@@ -62,7 +62,7 @@ Find the details on the [manual](https://jyotirmoys-organization.gitbook.io/twis
 
 ## Citation
 
-Das, J. (2024). TwistNext (v1.0.0). Zenodo. [https://doi.org/10.5281/zenodo.11105016](https://doi.org/10.5281/zenodo.11105016)
+Das, J. (2024). TwistNext (v1.0.0). Zenodo. [https://doi.org/10.5281/zenodo.14204261](https://doi.org/10.5281/zenodo.14204261)
 
 ## HELP/FAQ/Troubleshooting
 
