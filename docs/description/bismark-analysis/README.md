@@ -1,12 +1,12 @@
 # Bismark Analysis
 
-## Bismark Alignment
+## [Bismark Alignment](./#bismark-alignment)
 
-## Bismark Deduplication
+## [Bismark Deduplication](./#bismark-deduplication)
 
-## Bismark Methylation Extractor
+## [Bismark Methylation Extractor](./#bismark-methylation-extractor)
 
-## Bismark Report
+## [Bismark Report](./#bismark-report)
 
 
 
