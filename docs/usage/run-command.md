@@ -1,5 +1,14 @@
 # Run command
 
+### Clone the git repo
+
+```
+git clone https://github.com/JD2112/TwistNext.git
+cd TwistNext
+```
+
+### With the reference genome, --genome\_fasta
+
 ```
 nextflow run main.nf \
     -profile singularity \
@@ -8,6 +17,19 @@ nextflow run main.nf \
     --diff_meth_method edger \
     --outdir /mnt/SD3/test_twistNext_dagTest_edgeR 
 ```
+
+### With the bisulfite index, --bismark\_index
+
+```
+nextflow run main.nf \
+    -profile singularity \
+    --sample_sheet Sample_sheet_twist.csv \
+    --bismark_index /data/reference_genome/hg38/ \ 
+    --diff_meth_method edger \
+    --outdir /mnt/Results/test_twistNext_dagTest_edgeR 
+```
+
+
 
 ### Help
 
