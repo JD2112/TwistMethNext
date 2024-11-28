@@ -1,6 +1,6 @@
 # Highlights
 
-Here's a comprehensive overview of your methylation sequencing analysis pipeline:
+Here's a comprehensive overview of TwistNext DNA methylation sequencing analysis pipeline:
 
 1. **READ\_PROCESSING:**
    * **FASTQC:** Performs quality control checks on raw sequence data.
