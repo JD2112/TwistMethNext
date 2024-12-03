@@ -22,7 +22,7 @@ User can change it directly to `conf/params.config` or add to the `nextflow run`
 
 * `--logfc_cutoff` (optional) - to generate the MA plot, Volcano plot and gene ontology analysis, the **mean median difference (mmd)** or here as **logfc.** Default is **1.5**.
 * `--pvalue_cutoff` (optional) - for MA plot, volcano plot and calculating the significant differentially methylated CpGs from the analysis, the p-value cutoff is applied. The default is **0.05.** This cutoff is also applied to estimate the gene ontology analysis
-* `--hyper_color` (optional) - for MA and volcano plot hypermethylation CpGs colors. Default is **red.**
-* `--hypo_color` (optional) - for MA and Volcano plot hypomethylated CpGs colors. Default is **blue.**&#x20;
+* `--hyper_color` (optional) - for MA and volcano plot hypermethylation CpGs colors. Default is <mark style="color:red;">**red**</mark>**.**
+* `--hypo_color` (optional) - for MA and Volcano plot hypomethylated CpGs colors. Default is <mark style="color:blue;">**blue**</mark>**.**&#x20;
 * `--nonsig_color` (optional) - for non-significant DMCs (based on the pvalue cutoff). Default is **black.**
 * `--top_n`(optional) - for GO analysis. To peak top `n` (Default: 100) differentially methylated CpGs from the EdgeR/methylKit results.
