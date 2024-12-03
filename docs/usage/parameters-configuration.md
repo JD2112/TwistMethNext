@@ -18,3 +18,11 @@ User can change it directly to `conf/params.config` or add to the `nextflow run`
 * `--post_processing` (optional) - Default is `true` to run the post-processing steps. Can be set `false` to avoid it.
 * `--qualimap_args` (optional) - can use [qualimap arguments](http://qualimap.conesalab.org/doc_html/command_line.html).
 
+**Differential methylation analysis (figure specs, post-processing and GO analysis)**
+
+* `--logfc_cutoff` (optional) - to generate the MA plot, Volcano plot and gene ontology analysis, the **mean median difference (mmd)** or here as **logfc.** Default is **1.5**.
+* `--pvalue_cutoff` (optional) - for MA plot, volcano plot and calculating the significant differentially methylated CpGs from the analysis, the p-value cutoff is applied. The default is **0.05.** This cutoff is also applied to estimate the gene ontology analysis
+* `--hyper_color` (optional) - for MA and volcano plot hypermethylation CpGs colors. Default is **red.**
+* `--hypo_color` (optional) - for MA and Volcano plot hypomethylated CpGs colors. Default is **blue.**&#x20;
+* `--nonsig_color` (optional) - for non-significant DMCs (based on the pvalue cutoff). Default is **black.**
+* `--top_n`(optional) - for GO analysis. To peak top `n` (Default: 100) differentially methylated CpGs from the EdgeR/methylKit results.

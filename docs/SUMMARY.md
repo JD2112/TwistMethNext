@@ -17,6 +17,7 @@
     * [EdgeR](description/differential-methylation/edger.md)
     * [MethylKit](description/differential-methylation/methylkit.md)
   * [Post-processing](description/post-processing.md)
+  * [Gene Ontology analysis](description/gene-ontology-analysis.md)
 * [Usage](usage/README.md)
   * [Requirements](usage/requirements.md)
   * [Run command](usage/run-command.md)
@@ -24,4 +25,5 @@
   * [Parameters configuration](usage/parameters-configuration.md)
   * [Bismark Alignment with bowtie2](usage/bismark-alignment-with-bowtie2.md)
   * [Other Configurations](usage/other-configurations.md)
+  * [Results](usage/results.md)
 * [Credits](credits.md)
