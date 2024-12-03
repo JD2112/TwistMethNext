@@ -13,6 +13,7 @@
     * [Bismark Methylation Extractor](description/bismark-analysis/bismark-methylation-extractor.md)
     * [Bismark Report](description/bismark-analysis/bismark-report.md)
   * [Quality Mapping](description/quality-mapping.md)
+  * [QC reporting](description/qc-reporting.md)
   * [Differential Methylation](description/differential-methylation/README.md)
     * [EdgeR](description/differential-methylation/edger.md)
     * [MethylKit](description/differential-methylation/methylkit.md)
