@@ -27,7 +27,7 @@ After successful completion, Bismark generates a bisulfite-converted genome in t
 Output directory structure:
 
 ```plaintext
-plaintextCopy code/your_path_to_reference/
+your_path_to_reference/
     Bisulfite_Genome/
         CT_conversion/
         GA_conversion/
