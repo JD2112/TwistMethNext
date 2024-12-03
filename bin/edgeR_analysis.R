@@ -6,85 +6,149 @@ suppressPackageStartupMessages({
     library(readr)
     library(optparse)
     library(dplyr)
+    library(stringr)
+    library(org.Hs.eg.db)
 })
 
 # Define command line arguments
 option_list <- list(
-    make_option(c("-f", "--coverage_files"), type="character", default=NULL, 
-                help="Comma-separated list of Bismark coverage files", metavar="FILES"),
-    make_option(c("-d", "--design"), type="character", default=NULL, 
+    make_option(c("--design"), type="character", default=NULL, 
                 help="Design file path (CSV format)", metavar="FILE"),
-    make_option(c("-c", "--compare"), type="character", default="all", 
+    make_option(c("--compare"), type="character", default="all", 
                 help="Comparison string (e.g., 'GroupA_vs_GroupB') or 'all' for all pairwise comparisons [default= %default]", metavar="STRING"),
-    make_option(c("-o", "--output"), type="character", default=".", 
+    make_option(c("--output"), type="character", default=".", 
                 help="Output directory [default= %default]", metavar="DIR"),
-    make_option(c("-t", "--threshold"), type="integer", default=3, 
+    make_option(c("--coverage_threshold"), type="integer", default=3, 
                 help="Coverage threshold for filtering [default= %default]", metavar="INTEGER")
 )
 
 # Parse command line arguments
 opt_parser <- OptionParser(option_list=option_list)
-opt <- parse_args(opt_parser)
+opt <- parse_args(opt_parser, positional_arguments = TRUE)
+
+# Extract coverage files from positional arguments
+coverage_files <- opt$args
+
+# Print out the received arguments for debugging
+cat("Received arguments:\n")
+cat("coverage_files:", paste(coverage_files, collapse=" "), "\n")
+cat("design:", opt$options$design, "\n")
+cat("compare:", opt$options$compare, "\n")
+cat("output:", opt$options$output, "\n")
+cat("coverage_threshold:", opt$options$coverage_threshold, "\n")
 
 # Read design file
-targets <- read_csv(opt$design)
+targets <- read_csv(opt$options$design)
+print("Design file contents:")
+print(targets)
 
-# Read Bismark coverage files
-coverage_files <- unlist(strsplit(opt$coverage_files, ","))
-coverage_data <- lapply(coverage_files, function(file) {
-    read_delim(file, delim="\t", col_names=c("chr", "start", "end", "methylation_percentage", "count_methylated", "count_unmethylated"))
-})
+# Check if 'group' column exists
+if(!"group" %in% colnames(targets)) {
+    stop("Error: 'group' column not found in the design file. Please check your design file.")
+}
 
-# Combine coverage data
-combined_coverage <- Reduce(function(x, y) full_join(x, y, by=c("chr", "start", "end")), coverage_data)
+# Check number of unique groups
+unique_groups <- unique(targets$group)
+if(length(unique_groups) < 2) {
+    stop(paste("Error: Found only", length(unique_groups), "group(s). At least two groups are required for comparison."))
+}
 
-# Create DGEList object
-counts <- combined_coverage %>% select(starts_with("count_"))
-y <- DGEList(counts=counts, group=targets$Group)
+compare_str <- opt$options$compare
 
-# Filtering and normalization
-keep <- rowSums(cpm(y) > opt$threshold) >= 2
-y <- y[keep, , keep.lib.sizes=FALSE]
-
-# Design matrix
-design <- model.matrix(~0+group, data=y$samples)
-colnames(design) <- levels(y$samples$group)
-
-# Estimate dispersion
-y <- estimateDisp(y, design)
-
-# Fit model
-fit <- glmQLFit(y, design)
-
-# Perform comparisons
-if(opt$compare == "all") {
-    comparisons <- combn(levels(y$samples$group), 2, simplify = FALSE)
+# Determine comparisons
+if(compare_str == "all") {
+    comparisons <- combn(unique_groups, 2, simplify = FALSE)
+} else if(compare_str == "two_groups") {
+    comparisons <- list(unique_groups[1:2])
 } else {
-    group_ids <- strsplit(opt$compare, "_vs_")[[1]]
+    group_ids <- strsplit(as.character(compare_str), "_vs_")[[1]]
+    if(length(group_ids) != 2) {
+        stop("Error: Invalid comparison string. It should be in the format 'GroupA_vs_GroupB'.")
+    }
+    if(!all(group_ids %in% unique_groups)) {
+        stop("Error: One or both groups specified in the comparison string are not present in the design file.")
+    }
     comparisons <- list(group_ids)
 }
 
+# Read bismark data to DGEList
+tt <- readBismark2DGE(coverage_files, sample.names = targets$sample_id, readr = TRUE, verbose = TRUE)
+
+# Print sample names for debugging
+cat("Sample names in DGEList:\n")
+print(colnames(tt))
+
+# Cleaning of unwanted chromosomes
+keep <- rep(TRUE, nrow(tt))
+Chr <- as.character(tt$genes$Chr)
+keep[grep("random", Chr)] <- FALSE
+keep[grep("chrUn", Chr)] <- FALSE
+keep[Chr == "chrM"] <- FALSE
+tt1 <- tt[keep, , keep.lib.sizes = FALSE]
+
+# Assign chromosome names
+ChrNames <- paste0("chr", c(1:22, "X", "Y"))
+tt1$genes$Chr <- factor(tt1$genes$Chr, levels = ChrNames)
+o <- order(tt1$genes$Chr, tt1$genes$Locus)
+tt1 <- tt1[o,]
+
+# Filtering and normalizing
+Methylation <- gl(2, 1, ncol(tt1), labels = c("Me", "Un"))
+Me <- tt1$counts[, Methylation == "Me"]
+Un <- tt1$counts[, Methylation == "Un"]
+Coverage <- Me + Un
+
+# Keeping CpGs with at least the specified coverage threshold per sample
+keep <- rowSums(Coverage >= opt$options$coverage_threshold) == nrow(targets)
+HasBoth <- rowSums(Me) > 0 & rowSums(Un) > 0
+
+y <- tt1[keep & HasBoth, , keep.lib.sizes = FALSE]
+TotalLibSize <- 0.5 * y$samples$lib.size[Methylation == "Me"] + 0.5 * y$samples$lib.size[Methylation == "Un"]
+y$samples$lib.size <- rep(TotalLibSize, each = 2)
+
+# Perform comparisons
 for(comp in comparisons) {
     group1 <- comp[1]
     group2 <- comp[2]
     
     cat("Performing comparison:", group1, "vs", group2, "\n")
     
-    contrast <- makeContrasts(contrasts=paste0(group2, "-", group1), levels=design)
-    qlf <- glmQLFTest(fit, contrast=contrast)
+    # Subset the data for the current comparison
+    current_samples <- targets$group %in% c(group1, group2)
+    y_subset <- y[, rep(current_samples, each = 2)]
+    
+    # Design matrix
+    design_matrix <- model.matrix(~0 + group, data = data.frame(group = factor(rep(targets$group[current_samples], each = 2))))
+    colnames(design_matrix) <- levels(factor(targets$group[current_samples]))
+    
+    # Print dimensions for debugging
+    cat("Dimensions of y_subset:", dim(y_subset), "\n")
+    cat("Dimensions of design_matrix:", dim(design_matrix), "\n")
+    
+    # Estimate dispersion
+    y_subset <- estimateDisp(y_subset, design_matrix)
+    
+    # Fit model
+    fit <- glmQLFit(y_subset, design_matrix)
+    
+    # Define contrast
+    contrast <- makeContrasts(contrasts = paste0(group2, "-", group1), levels = design_matrix)
+    
+    # Perform test
+    qlf <- glmQLFTest(fit, contrast = contrast)
     
     # Get results
-    results <- topTags(qlf, n=Inf)
+    results <- topTags(qlf, n = Inf)
     
     # Prepare output
-    output_name <- paste0("EdgeR_group_", trimws(group1), "_vs_", trimws(group2), "_coverage", opt$threshold)
-    output_file <- file.path(opt$output, paste0(output_name, ".csv"))
+    output_name <- paste0("EdgeR_group_", trimws(group1), "_vs_", trimws(group2), "_coverage", opt$options$coverage_threshold)
+    output_file <- file.path(opt$options$output, paste0(output_name, ".csv"))
     
     # Write results
-    write.csv(results, file = output_file, quote = FALSE, row.names = TRUE)
+    write.csv(results$table, file = output_file, quote = FALSE, row.names = TRUE)
     
     cat("Results written to:", output_file, "\n")
 }
 
 cat("All analyses complete.\n")
-cat("Coverage threshold used:", opt$threshold, "\n")
+cat("Coverage threshold used:", opt$options$coverage_threshold, "\n")

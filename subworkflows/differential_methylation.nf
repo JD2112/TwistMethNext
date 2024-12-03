@@ -11,9 +11,15 @@ workflow DIFFERENTIAL_METHYLATION {
     main:
     ch_versions = Channel.empty()
 
+    // Prepare the coverage files channel
+    coverage_files_prepared = coverage_files
+        .map { meta, file -> file }
+        .collect()
+
     if (params.diff_meth_method == 'edger') {
         EDGER_ANALYSIS (
-            coverage_files,
+            //coverage_files.map { meta, file -> file }.collect(), //coverage_files,
+            coverage_files_prepared,
             design_file,
             compare_str,
             coverage_threshold
@@ -22,7 +28,8 @@ workflow DIFFERENTIAL_METHYLATION {
         ch_versions = ch_versions.mix(EDGER_ANALYSIS.out.versions)
     } else if (params.diff_meth_method == 'methylkit') {
         METHYLKIT_ANALYSIS (
-            coverage_files.map { meta, file -> file }.collect(),
+            //coverage_files.map { meta, file -> file }.collect(),
+            coverage_files_prepared,
             design_file,
             compare_str,
             coverage_threshold

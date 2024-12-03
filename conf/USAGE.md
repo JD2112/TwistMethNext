@@ -12,6 +12,11 @@ Options:
 --diff_meth_method     Differential methylation method to use: 'edger' or 'methylkit' (default: edger)
 --coverage_threshold   Minimum read coverage to consider a CpG site (default: 10)
 --genome               Path to the reference genome FASTA file (required if --bismark_index not provided)
+--logfc_cutoff         Differential methylation cut-off for Volcano or MA plot (default: 1.5)
+--pvalue_cutoff        Differential methylation P-value cut-off for Volcano or MA plot (default: 0.05)
+--hyper_color          Hypermethylation color for Volcano or MA plot (default: red)
+--hypo_cutoff         Hypomethylation color for Volcano or MA plot (default: blue)
+--nonsig_color        Non-significant color for Volcano or MA plot (default: black)  
 --help                 Show this help message and exit
 
 Input:

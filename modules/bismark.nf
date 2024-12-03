@@ -18,7 +18,7 @@ process BISMARK_GENOME_PREPARATION {
     cp -L $genome genome_dir/
     bismark_genome_preparation --verbose genome_dir
     mkdir -p bismark_index
-    mv genome_dir/* bismark_index/
+    mv genome_dir/* bismark_index/    
     
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -83,7 +83,7 @@ process BISMARK_DEDUPLICATE {
 
     output:
     tuple val(meta), path("*.deduplicated.bam"), emit: deduplicated_bam
-    tuple val(meta), path("*_deduplication_report.txt"), emit: report
+    tuple val(meta), path("*.deduplication_report.txt"), emit: report
     path "versions.yml"           , emit: versions
 
     script:
@@ -95,7 +95,7 @@ process BISMARK_DEDUPLICATE {
     deduplicate_bismark ${paired_end} $args --bam $bam
 
     # Rename the deduplication report to match the expected pattern
-    mv ${prefix}.deduplication_report.txt ${prefix}_deduplication_report.txt
+    # mv ${prefix}.deduplication_report.txt ${prefix}_deduplication_report.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -120,6 +120,7 @@ process BISMARK_METHYLATION_EXTRACTOR {
     tuple val(meta), path("*.bedGraph.gz"), emit: bedgraph
     tuple val(meta), path("*.bismark.cov.gz"), emit: coverage
     tuple val(meta), path("*_splitting_report.txt"), emit: report
+    //tuple val(meta), path("*M-bias.txt"), emit: mbias_report, optional: true 
     path "versions.yml", emit: versions
 
     script:
@@ -135,21 +136,21 @@ process BISMARK_METHYLATION_EXTRACTOR {
 process BISMARK_REPORT {
     label 'process_low'
 
-    // conda "bioconda::bismark=0.23.0"
-    // container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-    //     'quay.io/biocontainers/bismark:0.23.0--hdfd78af_1' :
-    //     'quay.io/biocontainers/bismark:0.23.0--hdfd78af_1' }"
-
     input:
-    path "*_report.txt"
+    tuple val(meta), path(reports)
 
     output:
-    path "bismark_summary_report.html", emit: summary_report
+    path "*.html", emit: summary_report
     path "versions.yml", emit: versions
 
     script:
+    def prefix = meta.id
     """
-    bismark2report
+    bismark2report \
+        --alignment_report *report.txt \
+        --dedup_report *.deduplication_report.txt \
+        --splitting_report *_splitting_report.txt
+        
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         bismark: \$( bismark --version | sed -e "s/Bismark Version: v//g" )

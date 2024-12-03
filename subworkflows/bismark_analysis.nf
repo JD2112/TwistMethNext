@@ -25,10 +25,16 @@ workflow BISMARK_ANALYSIS {
     QUALIMAP(ch_sorted_indexed_bam)
 
     BISMARK_METHYLATION_EXTRACTOR(BISMARK_DEDUPLICATE.out.deduplicated_bam)
-    BISMARK_REPORT(BISMARK_ALIGN.out.report.mix(
-        BISMARK_DEDUPLICATE.out.report,
-        BISMARK_METHYLATION_EXTRACTOR.out.report
-    ).collect())
+    
+    // BISMARK_REPORT(
+    //     BISMARK_ALIGN.out.report.join(BISMARK_DEDUPLICATE.out.report).join(BISMARK_METHYLATION_EXTRACTOR.out.report).join(BISMARK_ALIGN.out.report)
+    // )
+    reports_ch = BISMARK_ALIGN.out.report
+        .mix(BISMARK_DEDUPLICATE.out.report)
+        .mix(BISMARK_METHYLATION_EXTRACTOR.out.report)
+        .groupTuple()
+
+    BISMARK_REPORT(reports_ch)
 
     emit:
     coverage_files = BISMARK_METHYLATION_EXTRACTOR.out.coverage

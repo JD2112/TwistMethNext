@@ -8,9 +8,10 @@ include { READ_PROCESSING } from './subworkflows/read_processing'
 include { BISMARK_ANALYSIS } from './subworkflows/bismark_analysis'
 include { QC_REPORTING } from './subworkflows/qc_reporting'
 include { DIFFERENTIAL_METHYLATION } from './subworkflows/differential_methylation'
+include { RESULT_ANALYSIS } from './subworkflows/result_analysis'
 
 // Import Post-processing module
-include { POST_PROCESSING } from './modules/post_processing'
+//include { POST_PROCESSING } from './modules/post_processing'
 
 // Show help message
 if (params.help) {
@@ -66,9 +67,8 @@ workflow {
 
     // Read processing
     READ_PROCESSING(ch_samples)
-    //READ_PROCESSING.out.trimmed_reads.view { meta, reads -> "Trimmed: ${meta.id}, Reads: ${reads}" }
 
-        // Bismark analysis
+    // Bismark analysis
     BISMARK_ANALYSIS(READ_PROCESSING.out.trimmed_reads, ch_index.collect())
 
     // QC reporting
@@ -83,6 +83,7 @@ workflow {
     )
 
     // Differential Methylation Analysis
+    
     DIFFERENTIAL_METHYLATION(
         BISMARK_ANALYSIS.out.coverage_files,
         file(params.sample_sheet),
@@ -90,10 +91,18 @@ workflow {
         params.coverage_threshold
     )
 
-    // Post-processing
-    POST_PROCESSING(
+    // if a GTF annotation file is included for differential analysis
+    gtf_file = params.gtf ? file(params.gtf) : file('NO_FILE')
+
+    RESULT_ANALYSIS(
         DIFFERENTIAL_METHYLATION.out.results,
-        params.compare_str
+        params.compare_str,
+        params.logfc_cutoff,
+        params.pvalue_cutoff,
+        params.hyper_color,
+        params.hypo_color,
+        params.nonsig_color,
+        gtf_file
     )
 }
 

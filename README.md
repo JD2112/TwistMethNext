@@ -25,6 +25,7 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 | QC Reporting                               | [MultiQC](https://seqera.io/multiqc/)           |
 | Differential Methylation Analysis          | [EdgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html)/[MethylKit](https://www.bioconductor.org/packages/release/bioc/html/methylKit.html)   |
 | Post processing                            | [ggplot2](https://ggplot2.tidyverse.org/)           |
+| GO analysis                                | [Gene Ontology](https://geneontology.org)     |
 
 
 

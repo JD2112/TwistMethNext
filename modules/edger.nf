@@ -17,13 +17,17 @@ process EDGER_ANALYSIS {
     path "versions.yml", emit: versions
 
     script:
+    //def coverage_files_list = coverage_files.join(' ')
+
+    def coverage_files_list = coverage_files.collect { it.toString() }.join(' ')
     """
-    Rscript $baseDir/bin/edgeR_analysis.R \
-        --coverage_files '${coverage_files}' \
+    Rscript /mnt/SD2/Jyotirmoys/JD/Scripts/MyScripts/JDCo/TwistNext/bin/edgeR_analysis.R \
         --design "${design_file}" \
         --compare "${compare_str}" \
         --output . \
-        --threshold ${coverage_threshold}
+        --coverage_threshold ${coverage_threshold} \
+        ${coverage_files_list}
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         r-base: \$( R --version | grep "R version" | sed 's/R version //' | sed 's/ .*//' )
