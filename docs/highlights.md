@@ -21,5 +21,6 @@ Here's a comprehensive overview of TwistNext DNA methylation sequencing analysis
 5. **POST\_PROCESSING:** Generates summary statistics and visualizations of the differential methylation results.
 6. **GO\_ANALYSIS:** Generates GOChord diagram from the gene ontology analysis results.&#x20;
 
-<figure><img src=".gitbook/assets/workflow_dag_color.png" alt=""><figcaption><p>TwistNext: DAG for EdgeR analysis</p></figcaption></figure>
+<figure><img src=".gitbook/assets/edgeR_workflow.png" alt=""><figcaption><p>DAG for EdgeR workflow</p></figcaption></figure>
 
+<figure><img src=".gitbook/assets/methylkit_workflow.png" alt=""><figcaption><p>DAG for MethylKit workflow</p></figcaption></figure>
