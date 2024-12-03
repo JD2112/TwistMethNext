@@ -3,7 +3,7 @@
 ### Option 1: Without cloning the repo
 
 ```
-nextflow run https://github.com/JD2112/TwistNext.git \
+nextflow run JD2112/TwistNext -r main \
     -profile singularity \
     --sample_sheet Sample_sheet_twist.csv \
     --genome_fasta /data/reference_genome/hg38/hg38.fa \ 
