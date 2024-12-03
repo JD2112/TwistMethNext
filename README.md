@@ -30,7 +30,7 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 
 
 ## Pipeline Schema
-![](artworks/workflow_dag_color.png)
+![](artworks/edgeR_workflow.png)
 
 ## Requirements
 
@@ -40,31 +40,56 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 
 ## Usage
 
+### `--diff_meth_method` EdgeR
+
 ```
 # when using the reference genome indexing, --genome_fasta
 
-nextflow run main.nf \
+nextflow run JD2112/TwistNext \
     -profile singularity \
     --sample_sheet Sample_sheet_twist.csv \
     --genome_fasta /data/reference_genome/hg38/hg38.fa \ 
     --diff_meth_method edger \
-    --outdir /mnt/Results/test_twistNext_dagTest_edgeR 
+    --outdir Results/TwistNext_edgeR 
 
 
 # if you already have the bisulfite genome index, --bismark_index
 
-nextflow run main.nf \
+nextflow run JD2112/TwistNext \
     -profile singularity \
     --sample_sheet Sample_sheet_twist.csv \
     --bismark_index /data/reference_genome/hg38/ \ 
     --diff_meth_method edger \
-    --outdir /mnt/Results/test_twistNext_dagTest_edgeR 
+    --outdir /mnt/Results/TwistNext_edgeR 
+```
+
+### `--diff_meth_method` MethylKit
+
+```
+# when using the reference genome indexing, --genome_fasta
+
+nextflow run JD2112/TwistNext \
+    -profile singularity \
+    --sample_sheet Sample_sheet_twist.csv \
+    --genome_fasta /data/reference_genome/hg38/hg38.fa \ 
+    --diff_meth_method methylkit \
+    --outdir Results/TwistNext_methylKit 
+
+
+# if you already have the bisulfite genome index, --bismark_index
+
+nextflow run JD2112/TwistNext \
+    -profile singularity \
+    --sample_sheet Sample_sheet_twist.csv \
+    --bismark_index /data/reference_genome/hg38/ \ 
+    --diff_meth_method methylkit \
+    --outdir Results/TwistNext_methylKit 
 ```
 
 ## HELP
 
 ```
-nextflow run main.nf --help --outdir .
+nextflow run JD2112/TwistNext --help --outdir .
 ```
 Find the details on the [manual](https://jyotirmoys-organization.gitbook.io/twistnext)
 
