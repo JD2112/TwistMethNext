@@ -30,7 +30,7 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 
 
 ## Pipeline Schema
-![](artworks/edgeR_workflow.png)
+![](artworks/TN.png)
 
 ## Requirements
 
