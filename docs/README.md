@@ -21,7 +21,7 @@ layout:
 
 This Nextflow pipeline is designed for the analysis of Twist NGS Methylation data, including quality control, alignment, methylation calling, differential methylation analysis, and post-processing. It integrates various tools and custom scripts to provide a comprehensive analysis workflow.
 
-
+<figure><img src=".gitbook/assets/TN.png" alt=""><figcaption><p>Scehmatic of the pipeline</p></figcaption></figure>
 
 ### Features
 
