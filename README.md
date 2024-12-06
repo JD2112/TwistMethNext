@@ -97,7 +97,9 @@ Find the details on the [manual](https://jyotirmoys-organization.gitbook.io/twis
 - Main Author: 
     - Jyotirmoy Das ([@JD2112](https://github.com/JD2112))
 
-- Collaborators: ()
+- Collaborators:
+    - Debojyoti Das ([@BioDebojyoti](https://github.com/BioDebojyoti))
+    - Leila Nasirzadeh ([@Lailanasd](https://github.com/Leilanasd))
 
 ## Citation
 
