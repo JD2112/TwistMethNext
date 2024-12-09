@@ -4,3 +4,4 @@ work/
 .nextflow/
 pipeline_info/
 docs/
+*.sif

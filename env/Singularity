@@ -1,0 +1,26 @@
+Bootstrap: docker
+From: continuumio/miniconda3:4.10.3
+
+%files
+    environment.yml /environment.yml
+
+%environment
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+
+%labels
+    authors="Jyotirmoy Das" 
+    description="Singularity image containing all requirements for TwistNext pipeline"
+
+%post
+    apt-get update && apt-get install -y procps
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+    /opt/conda/bin/conda env create -f /environment.yml
+    /opt/conda/bin/conda clean -a
+
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> $SINGULARITY_ENVIRONMENT
+    echo "conda activate twistnext" >> $SINGULARITY_ENVIRONMENT
+
+%runscript
+    exec /bin/bash -c "source activate twistnext && /bin/bash"
