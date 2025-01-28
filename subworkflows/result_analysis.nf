@@ -4,7 +4,7 @@ include { GO_ANALYSIS } from '../modules/go_analysis'
 
 workflow RESULT_ANALYSIS {
     take:
-    diff_meth_results
+    diff_meth_results // Channel: [ val(method), path(results) ]
     compare_str
     logfc_cutoff
     pvalue_cutoff
@@ -12,13 +12,10 @@ workflow RESULT_ANALYSIS {
     hypo_color
     nonsig_color
     gtf_file
+    method // String: 'edger', 'methylkit', or 'both'
 
     main:
-
-    ANNOTATE_RESULTS(
-        diff_meth_results,
-        gtf_file
-        )
+    ANNOTATE_RESULTS(diff_meth_results, gtf_file)
 
     POST_PROCESSING(
         ANNOTATE_RESULTS.out.annotated_results,
@@ -41,6 +38,7 @@ workflow RESULT_ANALYSIS {
     post_processing_summary = POST_PROCESSING.out.summary
     post_processing_plots = POST_PROCESSING.out.plots
     go_analysis_plot = GO_ANALYSIS.out.plot
-    go_analysis_plot = GO_ANALYSIS.out.goplot
+    go_analysis_goplot = GO_ANALYSIS.out.goplot
     go_analysis_results = GO_ANALYSIS.out.results
+    versions = ANNOTATE_RESULTS.out.versions.mix(POST_PROCESSING.out.versions).mix(GO_ANALYSIS.out.versions)
 }

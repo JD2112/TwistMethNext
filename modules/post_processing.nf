@@ -2,7 +2,7 @@ process POST_PROCESSING {
     label 'process_medium'
 
     input:
-    path results
+    tuple val(method), path(results)
     val compare_str
     val logfc_cutoff
     val pvalue_cutoff
@@ -11,8 +11,8 @@ process POST_PROCESSING {
     val nonsig_color
 
     output:
-    path "summary_stats.csv", emit: summary
-    path "*.png", emit: plots
+    tuple val(method), path("${method}_summary_stats.csv"), emit: summary
+    tuple val(method), path("${method}_*.png"), emit: plots
     path "versions.yml", emit: versions
 
     script:
@@ -21,6 +21,7 @@ process POST_PROCESSING {
         --results ${results} \
         --compare "${compare_str}" \
         --output . \
+        --method ${method} \
         --logfc_cutoff ${logfc_cutoff} \
         --pvalue_cutoff ${pvalue_cutoff} \
         --hyper_color "${hyper_color}" \

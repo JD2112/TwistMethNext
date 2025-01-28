@@ -7,11 +7,9 @@ include { PREPARE_GENOME } from './subworkflows/prepare_genome'
 include { READ_PROCESSING } from './subworkflows/read_processing'
 include { BISMARK_ANALYSIS } from './subworkflows/bismark_analysis'
 include { QC_REPORTING } from './subworkflows/qc_reporting'
-include { DIFFERENTIAL_METHYLATION } from './subworkflows/differential_methylation'
+include { DIFFERENTIAL_METHYLATION as EDGER_ANALYSIS } from './subworkflows/differential_methylation'
+include { DIFFERENTIAL_METHYLATION as METHYLKIT_ANALYSIS } from './subworkflows/differential_methylation'
 include { RESULT_ANALYSIS } from './subworkflows/result_analysis'
-
-// Import Post-processing module
-//include { POST_PROCESSING } from './modules/post_processing'
 
 // Show help message
 if (params.help) {
@@ -34,6 +32,7 @@ genome       : ${params.genome_fasta}
 bismark index: ${params.bismark_index}
 outdir       : ${params.outdir}
 diff method  : ${params.diff_meth_method}
+run both     : ${params.run_both_methods}
 """
 
 def create_sample_channel(sample_sheet) {
@@ -82,27 +81,49 @@ workflow {
         BISMARK_ANALYSIS.out.qualimap_results
     )
 
-    // Differential Methylation Analysis
-    
-    DIFFERENTIAL_METHYLATION(
-        BISMARK_ANALYSIS.out.coverage_files,
-        file(params.sample_sheet),
-        params.compare_str,
-        params.coverage_threshold
-    )
+// Differential Methylation Analysis
+    if (params.run_both_methods) {
+        edger_results = EDGER_ANALYSIS(
+            BISMARK_ANALYSIS.out.coverage_files,
+            file(params.sample_sheet),
+            params.compare_str,
+            params.coverage_threshold,
+            'edger'
+        )
+        
+        methylkit_results = METHYLKIT_ANALYSIS(
+            BISMARK_ANALYSIS.out.coverage_files,
+            file(params.sample_sheet),
+            params.compare_str,
+            params.coverage_threshold,
+            'methylkit'
+        )
+        
+        diff_meth_results = edger_results.results.mix(methylkit_results.results)
+    } else {
+        diff_meth_results = DIFFERENTIAL_METHYLATION(
+            BISMARK_ANALYSIS.out.coverage_files,
+            file(params.sample_sheet),
+            params.compare_str,
+            params.coverage_threshold,
+            params.diff_meth_method
+        ).results
+    }
 
     // if a GTF annotation file is included for differential analysis
     gtf_file = params.gtf ? file(params.gtf) : file('NO_FILE')
 
+    // Result Analysis
     RESULT_ANALYSIS(
-        DIFFERENTIAL_METHYLATION.out.results,
+        diff_meth_results,
         params.compare_str,
         params.logfc_cutoff,
         params.pvalue_cutoff,
         params.hyper_color,
         params.hypo_color,
         params.nonsig_color,
-        gtf_file
+        gtf_file,
+        params.run_both_methods ? 'both' : params.diff_meth_method
     )
 }
 

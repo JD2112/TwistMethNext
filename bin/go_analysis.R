@@ -12,7 +12,7 @@ suppressPackageStartupMessages({
 # Parse command line arguments
 option_list <- list(
     make_option(c("--results"), type="character", default=NULL, 
-                help="Path to the EdgeR/MethylKit results file", metavar="FILE"),
+                help="Path to the results file", metavar="FILE"),
     make_option(c("--output"), type="character", default=".", 
                 help="Output directory [default= %default]", metavar="DIR"),
     make_option(c("--top_n"), type="integer", default=100,
@@ -20,16 +20,18 @@ option_list <- list(
     make_option(c("--logfc_cutoff"), type="double", default=0.5, 
                 help="Log2 fold change cutoff [default= %default]", metavar="NUMBER"),
     make_option(c("--pvalue_cutoff"), type="double", default=0.05, 
-                help="P-value cutoff [default= %default]", metavar="NUMBER")
+                help="P-value cutoff [default= %default]", metavar="NUMBER"),
+    make_option(c("--method"), type="character", default="edger",
+                help="Analysis method (edger or methylkit) [default= %default]", metavar="STRING")
 )
 
 opt_parser <- OptionParser(option_list=option_list)
 opt <- parse_args(opt_parser)
 
-# Read EdgeR/MethylKit results
+# Read results
 results <- read.csv(opt$results)
-cat("Results dimensions:", dim(results), "\n")
-cat("Results columns:", paste(colnames(results), collapse=", "), "\n")
+cat(opt$method, "results dimensions:", dim(results), "\n")
+cat(opt$method, "results columns:", paste(colnames(results), collapse=", "), "\n")
 
 # Filter and sort results
 filtered_results <- results %>%
@@ -110,18 +112,18 @@ generate_gochord_plot <- function(file_path, width, height) {
 }
 
 # Generate PNG file
-png(file.path(opt$output, "gochord_plot.png"), width = 16.5, height = 14, units = "in", res = 300)
+png(file.path(opt$output, paste0(opt$method, "_gochord_plot.png")), width = 16.5, height = 14, units = "in", res = 300)
 generate_gochord_plot()
 dev.off()
 
 # Generate SVG file
-svg(file.path(opt$output, "gochord_plot.svg"), width = 36, height = 36)
+svg(file.path(opt$output, paste0(opt$method, "_gochord_plot.svg")), width = 36, height = 36)
 generate_gochord_plot()
 dev.off()
 
 cat("GOChord plots saved as PNG and SVG in", opt$output, "\n")
 
 # Save GO enrichment results
-write.csv(go_enrichment@result, file.path(opt$output, "go_enrichment_results.csv"), row.names = FALSE)
+write.csv(go_enrichment@result, file.path(opt$output, paste0(opt$method, "_go_enrichment_results.csv")), row.names = FALSE)
 
 cat("GO analysis complete. Results saved in", opt$output, "\n")
