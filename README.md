@@ -40,6 +40,30 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 
 ## Usage
 
+### `--run_both_methods`
+
+```
+# when using the reference genome indexing, --genome_fasta
+
+nextflow run JD2112/TwistNext \
+    -profile singularity \
+    --sample_sheet Sample_sheet_twist.csv \
+    --genome_fasta /data/reference_genome/hg38/hg38.fa \ 
+    --run_both_methods \
+    --outdir Results/TwistNext_both 
+
+
+# if you already have the bisulfite genome index, --bismark_index
+
+nextflow run JD2112/TwistNext \
+    -profile singularity \
+    --sample_sheet Sample_sheet_twist.csv \
+    --bismark_index /data/reference_genome/hg38/ \ 
+    --run_both_methods
+    --outdir /mnt/Results/TwistNext_both
+```
+
+
 ### `--diff_meth_method` EdgeR
 
 ```
