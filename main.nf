@@ -10,6 +10,7 @@ include { QC_REPORTING } from './subworkflows/qc_reporting'
 include { DIFFERENTIAL_METHYLATION as EDGER_ANALYSIS } from './subworkflows/differential_methylation'
 include { DIFFERENTIAL_METHYLATION as METHYLKIT_ANALYSIS } from './subworkflows/differential_methylation'
 include { RESULT_ANALYSIS } from './subworkflows/result_analysis'
+include { ALIGNED_BAM_WORKFLOW } from './subworkflows/aligned_bam_workflow'
 
 // Show help message
 if (params.help) {
@@ -30,6 +31,7 @@ Twist DNA Methylation Data Analysis Pipeline
 sample sheet : ${params.sample_sheet}
 genome       : ${params.genome_fasta}
 bismark index: ${params.bismark_index}
+aligned bams : ${params.aligned_bams}
 outdir       : ${params.outdir}
 diff method  : ${params.diff_meth_method}
 run both     : ${params.run_both_methods}
@@ -52,39 +54,47 @@ def create_sample_channel(sample_sheet) {
 // Main workflow
 workflow {
     // Input channels
-    log.info "Creating sample channel from: ${params.sample_sheet}"
-    ch_samples = create_sample_channel(params.sample_sheet)
-    
-    // Genome preparation
-    if (!params.bismark_index) {
-        ch_genome = Channel.fromPath(params.genome_fasta, checkIfExists: true)
-        PREPARE_GENOME(ch_genome)
-        ch_index = PREPARE_GENOME.out.index
+    if (params.aligned_bams) {
+        log.info "Starting from aligned BAM files: ${params.aligned_bams}"
+        ch_aligned_bams = Channel.fromPath(params.aligned_bams)
+        ALIGNED_BAM_WORKFLOW(ch_aligned_bams)
+        ch_coverage_files = ALIGNED_BAM_WORKFLOW.out.coverage_files
+        ch_qc_reports = ALIGNED_BAM_WORKFLOW.out.qc_reports
     } else {
-        ch_index = Channel.fromPath(params.bismark_index, checkIfExists: true)
+        log.info "Creating sample channel from: ${params.sample_sheet}"
+        ch_samples = create_sample_channel(params.sample_sheet)
+        
+        // Genome preparation
+        if (!params.bismark_index) {
+            ch_genome = Channel.fromPath(params.genome_fasta, checkIfExists: true)
+            PREPARE_GENOME(ch_genome)
+            ch_index = PREPARE_GENOME.out.index
+        } else {
+            ch_index = Channel.fromPath(params.bismark_index, checkIfExists: true)
+        }
+
+        // Read processing
+        READ_PROCESSING(ch_samples)
+
+        // Bismark analysis
+        BISMARK_ANALYSIS(READ_PROCESSING.out.trimmed_reads, ch_index.collect())
+
+        ch_coverage_files = BISMARK_ANALYSIS.out.coverage_files
+        ch_qc_reports = QC_REPORTING(
+            READ_PROCESSING.out.fastqc_reports,
+            READ_PROCESSING.out.trimming_reports,
+            BISMARK_ANALYSIS.out.align_reports,
+            BISMARK_ANALYSIS.out.dedup_reports,
+            BISMARK_ANALYSIS.out.methylation_reports,
+            BISMARK_ANALYSIS.out.summary_report,
+            BISMARK_ANALYSIS.out.qualimap_results
+        )
     }
 
-    // Read processing
-    READ_PROCESSING(ch_samples)
-
-    // Bismark analysis
-    BISMARK_ANALYSIS(READ_PROCESSING.out.trimmed_reads, ch_index.collect())
-
-    // QC reporting
-    QC_REPORTING(
-        READ_PROCESSING.out.fastqc_reports,
-        READ_PROCESSING.out.trimming_reports,
-        BISMARK_ANALYSIS.out.align_reports,
-        BISMARK_ANALYSIS.out.dedup_reports,
-        BISMARK_ANALYSIS.out.methylation_reports,
-        BISMARK_ANALYSIS.out.summary_report,
-        BISMARK_ANALYSIS.out.qualimap_results
-    )
-
-// Differential Methylation Analysis
+    // Differential Methylation Analysis
     if (params.run_both_methods) {
         edger_results = EDGER_ANALYSIS(
-            BISMARK_ANALYSIS.out.coverage_files,
+            ch_coverage_files,
             file(params.sample_sheet),
             params.compare_str,
             params.coverage_threshold,
@@ -92,7 +102,7 @@ workflow {
         )
         
         methylkit_results = METHYLKIT_ANALYSIS(
-            BISMARK_ANALYSIS.out.coverage_files,
+            ch_coverage_files,
             file(params.sample_sheet),
             params.compare_str,
             params.coverage_threshold,
@@ -102,7 +112,7 @@ workflow {
         diff_meth_results = edger_results.results.mix(methylkit_results.results)
     } else {
         diff_meth_results = DIFFERENTIAL_METHYLATION(
-            BISMARK_ANALYSIS.out.coverage_files,
+            ch_coverage_files,
             file(params.sample_sheet),
             params.compare_str,
             params.coverage_threshold,
