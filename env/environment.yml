@@ -20,3 +20,9 @@ dependencies:
   - r-rcolorbrewer=1.1_2
   - r-reshape2=1.4.4
   - r-optparse=1.7.1
+  - r-dplyr
+  - bioconductor-org.hs.eg.db
+  - bioconductor-clusterprofiler
+  - r-readr
+  - bioconductor-edger
+  - bioconductor-genomation

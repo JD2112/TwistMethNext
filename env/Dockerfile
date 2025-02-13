@@ -23,5 +23,8 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Install GOplot using R
+RUN R -e "if (!requireNamespace('BiocManager', quietly = TRUE)) install.packages('BiocManager'); BiocManager::install('GOplot')"
+
 # Set the default command to activate the conda environment
 CMD ["/bin/bash", "-c", "source activate twistnext && /bin/bash"]
