@@ -41,6 +41,11 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 - Java (>=8)
 
 ## Usage
+1. User can start from the FASTQ files or Bismark aligned BAM files. Find the details on the [manual](https://jyotirmoys-organization.gitbook.io/twistnext)
+
+2. User can choose to run the differential methylation analysis - either EdgeR or MethylKit or both. Find the details on the [manual](https://jyotirmoys-organization.gitbook.io/twistnext)
+
+3. User can also use `--skip_diff_meth` to avoid the differential methylation analysis.
 
 ### `--run_both_methods`
 

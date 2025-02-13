@@ -9,3 +9,4 @@ Results/
 workflows/
 data/*.gtf
 data/*.gz
+*.dot
