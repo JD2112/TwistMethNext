@@ -137,7 +137,7 @@ process BISMARK_REPORT {
     label 'process_low'
 
     input:
-    tuple val(meta), path(reports)
+    tuple val(meta), path(deduplicated_bam), path(dedup_report), path(splitting_report)
 
     output:
     path "*.html", emit: summary_report
@@ -147,9 +147,9 @@ process BISMARK_REPORT {
     def prefix = meta.id
     """
     bismark2report \
-        --alignment_report *report.txt \
-        --dedup_report *.deduplication_report.txt \
-        --splitting_report *_splitting_report.txt
+        --alignment_report ${deduplicated_bam.simpleName}_SE_report.txt \
+        --dedup_report ${dedup_report} \
+        --splitting_report ${splitting_report}
         
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

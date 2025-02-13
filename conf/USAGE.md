@@ -8,18 +8,22 @@ Options:
 --------
 --sample_sheet         Path to the sample sheet CSV file (required)
 --bismark_index        Path to the Bismark index directory (required unless --genome or --aligned_bams is provided)
---genome               Path to the reference genome FASTA file (required if --bismark_index not provided
+--genome               Path to the reference genome FASTA file (required if --bismark_index not provided)
 --aligned_bams         Path to aligned BAM files (use this to start from aligned BAM files instead of FASTQ files)
 --outdir               Output directory (default: ./results)
 --diff_meth_method     Differential methylation method to use: 'edger' or 'methylkit' (default: edger)
 --run_both_methods     Run both edgeR and methylkit for differential methylation analysis (default: false)
+--skip_diff_meth	     Skip differential methylation analysis (default: false)
 --coverage_threshold   Minimum read coverage to consider a CpG site (default: 10)
---genome               Path to the reference genome FASTA file (required if --bismark_index not provided)
 --logfc_cutoff         Differential methylation cut-off for Volcano or MA plot (default: 1.5)
 --pvalue_cutoff        Differential methylation P-value cut-off for Volcano or MA plot (default: 0.05)
 --hyper_color          Hypermethylation color for Volcano or MA plot (default: red)
 --hypo_cutoff          Hypomethylation color for Volcano or MA plot (default: blue)
---nonsig_color         Non-significant color for Volcano or MA plot (default: black)  
+--nonsig_color         Non-significant color for Volcano or MA plot (default: black)
+--compare_str          Comparison string for differential analysis (e.g., "Group1-Group2")
+--refseq_file          Path to RefSeq file for annotation (optional)                            
+--gtf_file             Path to GTF file for annotation (optional)                               
+--top_n_genes          Number of top differentially methylated genes to report for GOplot (default: 100)   
 --help                 Show this help message and exit
 
 Input:
@@ -32,6 +36,7 @@ Where:
 - read2: Path to R2 FASTQ file (leave empty for single-end data)
 - group: Group identifier for differential methylation analysis
 
+Aligned BAM Files
 If using `--aligned_bams`, provide the path to the directory containing aligned BAM files or a glob pattern to match the BAM files. In this case, the 'read1' column in the sample sheet should contain the paths to the aligned BAM files, and the 'read2' column should be left empty.
 
 Output:
@@ -46,12 +51,14 @@ The pipeline will create several subdirectories in the specified output director
 - multiqc: MultiQC report summarizing QC metrics
 - differential_methylation: Differential methylation analysis results
 - post_processing: Summary statistics and plots of differential methylation results
+- go_analysis: gene ontology annotation from top n (100) genes identified by differential_methylation process.
 
 Profiles:
 ---------
 The pipeline comes with several pre-configured profiles:
 - standard: Local execution with default parameters
 - singularity: Executes pipeline using Singularity containers
+- docker: Executes pipeline using Docker containers
 - conda: Executes pipeline using Conda environments
 
 Example commands:
@@ -70,6 +77,9 @@ Example commands:
 
 
 5. Run both edgeR and methylkit for differential methylation analysis:
-   nextflow run main.nf -profile singularity --sample_sheet samples.csv --bismark_index /path/to/bismark_index --run_both_methods --outdir /path/to/results
+   nextflow run main.nf -profile singularity --sample_sheet samples.csv --bismark_index /path/to/bismark_index --run_both_methods --refseq_file data/hg38_RefSeq.bed.gz  --gtf_file data/Homo_sapiens.GRCh38.104.gtf --outdir /path/to/results
+
+6. Skip differential methylation analysis:
+   nextflow run main.nf -profile singularity --sample_sheet samples.csv --bismark_index /path/to/bismark_index --skip_diff_meth --outdir /path/to/results
 
 For more information and detailed documentation, please refer to the README.md file.

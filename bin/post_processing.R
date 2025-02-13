@@ -33,13 +33,31 @@ opt <- parse_args(opt_parser)
 
 # Read results
 results <- read.csv(opt$results)
+print(paste("Dimensions of results:", dim(results)[1], "rows,", dim(results)[2], "columns"))
+print(str(results))
 
-# Add a column for significance based on user-defined cutoffs
-results$significance <- case_when(
-    results$logFC >= opt$logfc_cutoff & results$PValue < opt$pvalue_cutoff ~ "Hypermethylated",
-    results$logFC <= -opt$logfc_cutoff & results$PValue < opt$pvalue_cutoff ~ "Hypomethylated",
-    TRUE ~ "Not Significant"
-)
+# Add a column for significance based on user-defined cutoffs and the analysis method
+if (opt$method == "edger") {
+    results$significance <- case_when(
+        results$logFC >= opt$logfc_cutoff & results$PValue < opt$pvalue_cutoff ~ "Hypermethylated",
+        results$logFC <= -opt$logfc_cutoff & results$PValue < opt$pvalue_cutoff ~ "Hypomethylated",
+        TRUE ~ "Not Significant"
+    )
+    x_axis <- "logFC"
+    y_axis <- "-log10(PValue)"
+} else if (opt$method == "methylkit") {
+    results$significance <- case_when(
+        results$meth.diff >= opt$logfc_cutoff & results$qvalue < opt$pvalue_cutoff ~ "Hypermethylated",
+        results$meth.diff <= -opt$logfc_cutoff & results$qvalue < opt$pvalue_cutoff ~ "Hypomethylated",
+        TRUE ~ "Not Significant"
+    )
+    x_axis <- "meth.diff"
+    y_axis <- "-log10(qvalue)"
+} else {
+    stop("Unknown method. Use 'edger' or 'methylkit'.")
+}
+
+print(table(results$significance))
 
 # Generate summary statistics
 summary_stats <- results %>%
@@ -58,30 +76,43 @@ color_palette <- c("Hypermethylated" = opt$hyper_color,
                    "Not Significant" = opt$nonsig_color)
 
 # Create volcano plot
-ggplot(results, aes(x = logFC, y = -log10(PValue), color = significance)) +
+ggplot(results, aes_string(x = x_axis, y = y_axis, color = "significance")) +
     geom_point(alpha = 0.6) +
     scale_color_manual(values = color_palette) +
     geom_vline(xintercept = c(-opt$logfc_cutoff, opt$logfc_cutoff), linetype = "dashed", color = "black") +
     geom_hline(yintercept = -log10(opt$pvalue_cutoff), linetype = "dashed", color = "black") +
     labs(title = paste("Volcano Plot -", opt$compare, "(", opt$method, ")"), 
-         x = "Log2 Fold Change", y = "-Log10 P-value",
+         x = ifelse(opt$method == "edger", "Log2 Fold Change", "Methylation Difference"),
+         y = ifelse(opt$method == "edger", "-Log10 P-value", "-Log10 Q-value"),
          color = "Methylation Status") +
     theme_minimal() +
     theme(legend.position = "right")
 ggsave(file.path(opt$output, paste0(opt$method, "_volcano_plot.png")), width = 10, height = 8)
 
-# Create MA plot
-ggplot(results, aes(x = logCPM, y = logFC, color = significance)) +
-    geom_point(alpha = 0.6) +
-    scale_color_manual(values = color_palette) +
-    geom_hline(yintercept = c(-opt$logfc_cutoff, opt$logfc_cutoff), linetype = "dashed", color = "black") +
-    labs(title = paste("MA Plot -", opt$compare, "(", opt$method, ")"), 
-         x = "Log2 CPM", y = "Log2 Fold Change",
-         color = "Methylation Status") +
-    theme_minimal() +
-    theme(legend.position = "right")
-ggsave(file.path(opt$output, paste0(opt$method, "_ma_plot.png")), width = 10, height = 8)
-
+# Create MA plot (for EdgeR) or scatter plot (for MethylKit)
+if (opt$method == "edger") {
+    ggplot(results, aes(x = logCPM, y = logFC, color = significance)) +
+        geom_point(alpha = 0.6) +
+        scale_color_manual(values = color_palette) +
+        geom_hline(yintercept = c(-opt$logfc_cutoff, opt$logfc_cutoff), linetype = "dashed", color = "black") +
+        labs(title = paste("MA Plot -", opt$compare, "(", opt$method, ")"), 
+             x = "Log2 CPM", y = "Log2 Fold Change",
+             color = "Methylation Status") +
+        theme_minimal() +
+        theme(legend.position = "right")
+} else {
+    ggplot(results, aes(x = meth.diff, y = -log10(qvalue), color = significance)) +
+        geom_point(alpha = 0.6) +
+        scale_color_manual(values = color_palette) +
+        geom_vline(xintercept = c(-opt$logfc_cutoff, opt$logfc_cutoff), linetype = "dashed", color = "black") +
+        geom_hline(yintercept = -log10(opt$pvalue_cutoff), linetype = "dashed", color = "black") +
+        labs(title = paste("Methylation Difference vs Q-value -", opt$compare, "(", opt$method, ")"), 
+             x = "Methylation Difference", y = "-Log10 Q-value",
+             color = "Methylation Status") +
+        theme_minimal() +
+        theme(legend.position = "right")
+}
+ggsave(file.path(opt$output, paste0(opt$method, "_ma_or_scatter_plot.png")), width = 10, height = 8)
 # Print the cutoffs and colors used
 cat(sprintf("Analysis performed with:\nMethod: %s\nlogFC cutoff: %f\np-value cutoff: %f\n", 
             opt$method, opt$logfc_cutoff, opt$pvalue_cutoff))

@@ -33,16 +33,29 @@ results <- read.csv(opt$results)
 cat(opt$method, "results dimensions:", dim(results), "\n")
 cat(opt$method, "results columns:", paste(colnames(results), collapse=", "), "\n")
 
+# Define column names based on the method
+if (opt$method == "edger") {
+    logfc_col <- "logFC"
+    pvalue_col <- "PValue"
+    symbol_col <- "Symbol"
+} else if (opt$method == "methylkit") {
+    logfc_col <- "meth.diff"
+    pvalue_col <- "qvalue"
+    symbol_col <- "SYMBOL"
+} else {
+    stop("Unknown method. Use 'edger' or 'methylkit'.")
+}
+
 # Filter and sort results
 filtered_results <- results %>%
-    filter(abs(logFC) >= opt$logfc_cutoff, PValue < opt$pvalue_cutoff) %>%
-    arrange(PValue) %>%
+    filter(abs(!!sym(logfc_col)) >= opt$logfc_cutoff, !!sym(pvalue_col) < opt$pvalue_cutoff) %>%
+    arrange(!!sym(pvalue_col)) %>%
     head(opt$top_n)
 
 cat("Filtered results dimensions:", dim(filtered_results), "\n")
 
-# Extract gene symbols (assuming they are in a column named 'Symbol')
-genes <- filtered_results$Symbol
+# Extract gene symbols
+genes <- filtered_results[[symbol_col]]
 
 if(length(genes) == 0) {
     stop("No genes passed the filtering criteria. Try adjusting the logfc_cutoff and pvalue_cutoff.")
@@ -71,7 +84,7 @@ chord_data <- data.frame(
 
 # Add logFC to chord_data
 chord_data$logFC <- sapply(strsplit(chord_data$Genes, ","), function(x) {
-    mean(filtered_results$logFC[match(x, filtered_results$Symbol)], na.rm = TRUE)
+    mean(filtered_results[[logfc_col]][match(x, filtered_results[[symbol_col]])], na.rm = TRUE)
 })
 
 cat("Chord data dimensions:", dim(chord_data), "\n")
@@ -89,7 +102,7 @@ for(i in 1:nrow(chord_data)) {
 }
 
 # Add logFC as a column to mat
-mat <- cbind(mat, logFC = filtered_results$logFC[match(rownames(mat), filtered_results$Symbol)])
+mat <- cbind(mat, logFC = filtered_results[[logfc_col]][match(rownames(mat), filtered_results[[symbol_col]])])
 
 cat("Matrix dimensions:", dim(mat), "\n")
 print(head(mat))

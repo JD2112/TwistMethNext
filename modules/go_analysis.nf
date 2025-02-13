@@ -5,6 +5,7 @@ process GO_ANALYSIS {
     tuple val(method), path(results)
     val logfc_cutoff
     val pvalue_cutoff
+    val top_n
 
     output:
     tuple val(method), path("${method}_gochord_plot.png"), emit: plot
@@ -19,7 +20,8 @@ process GO_ANALYSIS {
         --output . \
         --method ${method} \
         --logfc_cutoff ${logfc_cutoff} \
-        --pvalue_cutoff ${pvalue_cutoff}
+        --pvalue_cutoff ${pvalue_cutoff} \
+        --top_n ${top_n}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

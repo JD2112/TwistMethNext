@@ -99,71 +99,67 @@ workflow {
     // Create a channel for the GTF file
     ch_gtf = params.gtf_file ? Channel.fromPath(params.gtf_file) : Channel.value('NO_FILE')
 
-    if (!params.skip_diff_meth) {
-        // Differential Methylation Analysis
-        DIFFERENTIAL_METHYLATION(
-            ch_coverage_files,
-            file(params.sample_sheet),
+    // Differential Methylation Analysis
+    DIFFERENTIAL_METHYLATION(
+        ch_coverage_files,
+        file(params.sample_sheet),
+        params.compare_str,
+        params.coverage_threshold,
+        params.run_both_methods ? 'both' : params.diff_meth_method,
+        ch_refseq
+    )
+
+    // Log the outputs to verify they're not empty
+    DIFFERENTIAL_METHYLATION.out.edger_results.view { "EdgeR results: $it" }
+    DIFFERENTIAL_METHYLATION.out.methylkit_results.view { "MethylKit results: $it" }
+
+    // Result Analysis
+    if (params.run_both_methods) {
+        log.info "Starting RESULT_ANALYSIS for EdgeR"
+        ch_edger_results = DIFFERENTIAL_METHYLATION.out.edger_results
+            .map { file -> ['edger', file] }
+            .view { "EdgeR results before RESULT_ANALYSIS: $it" }
+            .ifEmpty { error "No EdgeR results found. Please check the DIFFERENTIAL_METHYLATION process." }
+
+        edger_results = RESULT_ANALYSIS(
+            ch_edger_results,
             params.compare_str,
-            params.coverage_threshold,
-            params.run_both_methods ? 'both' : params.diff_meth_method,
-            ch_refseq
+            params.logfc_cutoff,
+            params.pvalue_cutoff,
+            params.hyper_color,
+            params.hypo_color,
+            params.nonsig_color,
+            ch_gtf,
+            'edger',
+            params.top_n_genes
         )
+        log.info "Completed RESULT_ANALYSIS for EdgeR"
 
-        // Log the outputs to verify they're not empty
-        DIFFERENTIAL_METHYLATION.out.edger_results.view { "EdgeR results: $it" }
-        DIFFERENTIAL_METHYLATION.out.methylkit_results.view { "MethylKit results: $it" }
-
-        // Result Analysis
-        if (params.run_both_methods) {
-            log.info "Starting RESULT_ANALYSIS for EdgeR"
-            ch_edger_results = DIFFERENTIAL_METHYLATION.out.edger_results
-                .map { file -> ['edger', file] }
-                .view { "EdgeR results before RESULT_ANALYSIS: $it" }
-                .ifEmpty { error "No EdgeR results found. Please check the DIFFERENTIAL_METHYLATION process." }
-
-            edger_results = RESULT_ANALYSIS(
-                ch_edger_results,
-                params.compare_str,
-                params.logfc_cutoff,
-                params.pvalue_cutoff,
-                params.hyper_color,
-                params.hypo_color,
-                params.nonsig_color,
-                ch_gtf,
-                'edger',
-                params.top_n_genes
-            )
-            log.info "Completed RESULT_ANALYSIS for EdgeR"
-
-            methylkit_results = RESULT_ANALYSIS(
-                DIFFERENTIAL_METHYLATION.out.methylkit_results,
-                params.compare_str,
-                params.logfc_cutoff,
-                params.pvalue_cutoff,
-                params.hyper_color,
-                params.hypo_color,
-                params.nonsig_color,
-                ch_gtf,
-                'methylkit',
-                params.top_n_genes
-            )
-        } else {
-            results = RESULT_ANALYSIS(
-                params.diff_meth_method == 'edger' ? DIFFERENTIAL_METHYLATION.out.edger_results : DIFFERENTIAL_METHYLATION.out.methylkit_results,
-                params.compare_str,
-                params.logfc_cutoff,
-                params.pvalue_cutoff,
-                params.hyper_color,
-                params.hypo_color,
-                params.nonsig_color,
-                ch_gtf,
-                params.diff_meth_method,
-                params.top_n_genes
-            )
-        }
+        methylkit_results = RESULT_ANALYSIS(
+            DIFFERENTIAL_METHYLATION.out.methylkit_results,
+            params.compare_str,
+            params.logfc_cutoff,
+            params.pvalue_cutoff,
+            params.hyper_color,
+            params.hypo_color,
+            params.nonsig_color,
+            ch_gtf,
+            'methylkit',
+            params.top_n_genes
+        )
     } else {
-        log.info "Skipping Differential Methylation Analysis and Result Analysis as requested"
+        results = RESULT_ANALYSIS(
+            params.diff_meth_method == 'edger' ? DIFFERENTIAL_METHYLATION.out.edger_results : DIFFERENTIAL_METHYLATION.out.methylkit_results,
+            params.compare_str,
+            params.logfc_cutoff,
+            params.pvalue_cutoff,
+            params.hyper_color,
+            params.hypo_color,
+            params.nonsig_color,
+            ch_gtf,
+            params.diff_meth_method,
+            params.top_n_genes
+        )
     }
 }
 
