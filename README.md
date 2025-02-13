@@ -118,25 +118,25 @@ nextflow run JD2112/TwistNext \
 ```
 ## Options:
 --------
-`--sample_sheet`         Path to the sample sheet CSV file (required)
-`--bismark_index`        Path to the Bismark index directory (required unless `--genome` or `--aligned_bams` is provided)
-`--genome`               Path to the reference genome FASTA file (required if `--bismark_index` not provided)
-`--aligned_bams`         Path to aligned BAM files (use this to start from aligned BAM files instead of FASTQ files)
-`--outdir`               Output directory (default: ./results)
-`--diff_meth_method`     Differential methylation method to use: 'edger' or 'methylkit' (default: edger)
---run_both_methods     Run both edgeR and methylkit for differential methylation analysis (default: false)
-`--skip_diff_meth`	     Skip differential methylation analysis (default: false)
-`--coverage_threshold`   Minimum read coverage to consider a CpG site (default: 10)
-`--logfc_cutoff`         Differential methylation cut-off for Volcano or MA plot (default: 1.5)
-`--pvalue_cutoff`        Differential methylation P-value cut-off for Volcano or MA plot (default: 0.05)
-`--hyper_color`          Hypermethylation color for Volcano or MA plot (default: red)
-`--hypo_cutoff`          Hypomethylation color for Volcano or MA plot (default: blue)
-`--nonsig_color`         Non-significant color for Volcano or MA plot (default: black)
-`--compare_str`          Comparison string for differential analysis (e.g., "Group1-Group2")
-`--refseq_file`          Path to RefSeq file for annotation (optional)                            
-`--gtf_file`             Path to GTF file for annotation (optional)                               
-`--top_n_genes`          Number of top differentially methylated genes to report for GOplot (default: 100)   
-`--help`                 Show this help message and exit
+`--sample_sheet`         Path to the sample sheet CSV file (required) \
+`--bismark_index`        Path to the Bismark index directory (required unless `--genome` or `--aligned_bams` is provided) \
+`--genome`               Path to the reference genome FASTA file (required if `--bismark_index` not provided) \
+`--aligned_bams`         Path to aligned BAM files (use this to start from aligned BAM files instead of FASTQ files) \
+`--outdir`               Output directory (default: ./results) \
+`--diff_meth_method`     Differential methylation method to use: 'edger' or 'methylkit' (default: edger) \
+--run_both_methods     Run both edgeR and methylkit for differential methylation analysis (default: false) \
+`--skip_diff_meth`	     Skip differential methylation analysis (default: false) \
+`--coverage_threshold`   Minimum read coverage to consider a CpG site (default: 10) \
+`--logfc_cutoff`         Differential methylation cut-off for Volcano or MA plot (default: 1.5) \
+`--pvalue_cutoff`        Differential methylation P-value cut-off for Volcano or MA plot (default: 0.05) \
+`--hyper_color`          Hypermethylation color for Volcano or MA plot (default: red) \
+`--hypo_cutoff`          Hypomethylation color for Volcano or MA plot (default: blue) \
+`--nonsig_color`         Non-significant color for Volcano or MA plot (default: black) \
+`--compare_str`          Comparison string for differential analysis (e.g., "Group1-Group2") \
+`--refseq_file`          Path to RefSeq file for annotation (optional)                             \
+`--gtf_file`             Path to GTF file for annotation (optional)                                \
+`--top_n_genes`          Number of top differentially methylated genes to report for GOplot (default: 100)    \
+`--help`                 Show this help message and exit 
 
 
 ## HELP
