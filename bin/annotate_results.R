@@ -9,11 +9,9 @@ suppressPackageStartupMessages({
 # Parse command line arguments
 option_list <- list(
     make_option(c("--results"), type="character", default=NULL, 
-                help="Path to the results file", metavar="FILE"),
+                help="Path to the EdgeR results file", metavar="FILE"),
     make_option(c("--output"), type="character", default="annotated_results.csv", 
-                help="Output file name [default= %default]", metavar="FILE"),
-    make_option(c("--method"), type="character", default="edger",
-                help="Analysis method (edger or methylkit) [default= %default]", metavar="STRING")
+                help="Output file name [default= %default]", metavar="FILE")
 )
 
 opt_parser <- OptionParser(option_list=option_list)
@@ -24,11 +22,11 @@ if (is.null(opt$results)) {
     stop("Error: --results argument is required. Use --help for more information.")
 }
 
-# Read results
-cat("Reading", opt$method, "results file:", opt$results, "\n")
+# Read EdgeR results
+cat("Reading EdgeR results file:", opt$results, "\n")
 results <- read.csv(opt$results)
-cat(opt$method, "results dimensions:", dim(results), "\n")
-cat(opt$method, "results columns:", paste(colnames(results), collapse=", "), "\n")
+cat("EdgeR results dimensions:", dim(results), "\n")
+cat("EdgeR results columns:", paste(colnames(results), collapse=", "), "\n")
 
 # Ensure Chr column has 'chr' prefix
 results$Chr <- ifelse(grepl("^chr", results$Chr), results$Chr, paste0("chr", results$Chr))
@@ -47,11 +45,10 @@ results$Width <- TSS$width
 cat("Number of results with gene annotations:", sum(!is.na(results$EntrezID)), "\n")
 
 # Write the results with gene annotations
-output_file <- paste0(opt$method, "_", opt$output)
 cat("Writing annotated results...\n")
-write.csv(results, file = output_file, row.names = FALSE)
+write.csv(results, file = opt$output, row.names = FALSE)
 
-cat("Annotation complete. Results saved to", output_file, "\n")
+cat("Annotation complete. Results saved to", opt$output, "\n")
 
 # Print summary
 cat("\nSummary:\n")

@@ -6,3 +6,7 @@ pipeline_info/
 docs/
 *.sif
 Results/
+workflows/
+data/*.gtf
+data/*.gz
+*.dot
