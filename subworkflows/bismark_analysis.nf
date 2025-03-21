@@ -39,8 +39,8 @@ workflow BISMARK_ANALYSIS {
     emit:
     coverage_files = BISMARK_METHYLATION_EXTRACTOR.out.coverage
     align_reports = BISMARK_ALIGN.out.report
-    dedup_reports = BISMARK_DEDUPLICATE.out.report
-    methylation_reports = BISMARK_METHYLATION_EXTRACTOR.out.report
+    dedup_reports = BISMARK_DEDUPLICATE.out.dedup_report
+    methylation_reports = BISMARK_METHYLATION_EXTRACTOR.out.splitting_report
     summary_report = BISMARK_REPORT.out.summary_report
     deduplicated_bam     = BISMARK_DEDUPLICATE.out.deduplicated_bam
     sorted_bam           = SAMTOOLS_SORT.out.bam
