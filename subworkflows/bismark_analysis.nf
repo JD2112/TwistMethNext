@@ -30,9 +30,9 @@ workflow BISMARK_ANALYSIS {
     //     BISMARK_ALIGN.out.report.join(BISMARK_DEDUPLICATE.out.report).join(BISMARK_METHYLATION_EXTRACTOR.out.report).join(BISMARK_ALIGN.out.report)
     // )
     reports_ch = BISMARK_ALIGN.out.report
-        .mix(BISMARK_DEDUPLICATE.out.report)
-        .mix(BISMARK_METHYLATION_EXTRACTOR.out.report)
-        .groupTuple()
+    .mix(BISMARK_DEDUPLICATE.out.dedup_report)  // Change 'report' to 'dedup_report'
+    .mix(BISMARK_METHYLATION_EXTRACTOR.out.splitting_report)  // Change 'report' to 'splitting_report'
+    .groupTuple()
 
     BISMARK_REPORT(reports_ch)
 

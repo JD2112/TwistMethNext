@@ -134,23 +134,29 @@ process BISMARK_METHYLATION_EXTRACTOR {
 }
 
 process BISMARK_REPORT {
-    label 'process_low'
+    label 'process_low'    
 
     input:
-    tuple val(meta), path(deduplicated_bam), path(dedup_report), path(splitting_report)
+    tuple val(meta), path(reports)
 
     output:
-    path "*.html", emit: summary_report
+    path "${meta.id}_bismark_report.html", emit: summary_report
     path "versions.yml", emit: versions
 
     script:
     def prefix = meta.id
     """
+    # Find the specific reports
+    align_report=\$(find . -name "*_SE_report.txt" -o -name "*_PE_report.txt")
+    dedup_report=\$(find . -name "*.deduplication_report.txt")
+    splitting_report=\$(find . -name "*_splitting_report.txt")
+
     bismark2report \
-        --alignment_report ${deduplicated_bam.simpleName}_SE_report.txt \
-        --dedup_report ${dedup_report} \
-        --splitting_report ${splitting_report}
-        
+        --alignment_report \$align_report \
+        --dedup_report \$dedup_report \
+        --splitting_report \$splitting_report \
+        --output ${prefix}_bismark_report.html
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         bismark: \$( bismark --version | sed -e "s/Bismark Version: v//g" )
