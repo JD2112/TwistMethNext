@@ -83,7 +83,7 @@ process BISMARK_DEDUPLICATE {
 
     output:
     tuple val(meta), path("*.deduplicated.bam"), emit: deduplicated_bam
-    tuple val(meta), path("*.deduplication_report.txt"), emit: report
+    tuple val(meta), path("*.deduplication_report.txt"), emit: dedup_report
     path "versions.yml"           , emit: versions
 
     script:
@@ -119,7 +119,7 @@ process BISMARK_METHYLATION_EXTRACTOR {
     output:
     tuple val(meta), path("*.bedGraph.gz"), emit: bedgraph
     tuple val(meta), path("*.bismark.cov.gz"), emit: coverage
-    tuple val(meta), path("*_splitting_report.txt"), emit: report
+    tuple val(meta), path("*_splitting_report.txt"), emit: splitting_report
     //tuple val(meta), path("*M-bias.txt"), emit: mbias_report, optional: true 
     path "versions.yml", emit: versions
 
