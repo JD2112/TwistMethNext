@@ -18,8 +18,8 @@ workflow RESULT_ANALYSIS {
     top_n_genes
 
     main:
-    log.info "Starting RESULT_ANALYSIS for method: $method"
-    log.info "Received diff_meth_results: $diff_meth_results"
+    //log.info "Starting RESULT_ANALYSIS for method: $method"
+    //log.info "Received diff_meth_results: $diff_meth_results"
     
     ch_edger_results = Channel.empty()
     ch_methylkit_results = Channel.empty()
@@ -34,7 +34,7 @@ workflow RESULT_ANALYSIS {
     ch_versions = Channel.empty()
 
     if (method == 'edger' || method == 'both') {
-        log.info "RESULT_ANALYSIS: Processing EdgeR results"
+        //log.info "RESULT_ANALYSIS: Processing EdgeR results"
         ch_edger_results = diff_meth_results.filter { it[0] == 'edger' }
         ch_edger_results.view { "Filtered EdgeR results: $it" }
         
@@ -67,9 +67,16 @@ workflow RESULT_ANALYSIS {
     }
 
     if (method == 'methylkit' || method == 'both') {
-        ch_methylkit_results = diff_meth_results.filter { it[0] == 'methylkit' }
+        ch_methylkit_results = diff_meth_results
+            .filter { it[0] == 'methylkit' }
+            .map { method, results -> 
+                def results_file = results instanceof Path ? results : results[1]
+                [method, results_file]
+            }
         
-        log.info "Processing MethylKit results"
+        //log.info "Processing MethylKit results"
+        ch_methylkit_results.view { "Debug - MethylKit results before POST_PROCESSING: $it" }
+        
         POST_PROCESSING_METHYLKIT(
             ch_methylkit_results,
             compare_str,
@@ -94,7 +101,7 @@ workflow RESULT_ANALYSIS {
         ch_versions = ch_versions.mix(POST_PROCESSING_METHYLKIT.out.versions).mix(GO_ANALYSIS_METHYLKIT.out.versions)
     }
 
-    log.info "Completed RESULT_ANALYSIS for method: $method"
+    //log.info "Completed RESULT_ANALYSIS for method: $method"
 
     emit:
     edger_results = ch_edger_results

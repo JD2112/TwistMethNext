@@ -19,6 +19,7 @@ process EDGER_ANALYSIS {
 
     script:
     def coverage_files_list = coverage_files.collect { it.toString() }.join(' ')
+    
     """
     Rscript ${projectDir}/bin/edgeR_analysis.R \\
         --design "${design_file}" \\

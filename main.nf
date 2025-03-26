@@ -35,6 +35,10 @@ outdir       : ${params.outdir}
 diff method  : ${params.diff_meth_method}
 run both     : ${params.run_both_methods}
 skip diff    : ${params.skip_diff_meth}
+methylkit assembly: ${params.methylkit.assembly}
+methylkit mc_cores: ${params.methylkit.mc_cores}
+methylkit diff   : ${params.methylkit.diff}
+methylkit qvalue : ${params.methylkit.qvalue}
 """
 
 def create_sample_channel(sample_sheet) {
@@ -107,23 +111,36 @@ workflow {
             params.compare_str,
             params.coverage_threshold,
             params.run_both_methods ? 'both' : params.diff_meth_method,
-            ch_refseq
+            ch_refseq,
+            params.methylkit.assembly,
+            params.methylkit.mc_cores,
+            params.methylkit.diff,
+            params.methylkit.qvalue
         )
+
+        ch_diff_meth_results = Channel.empty()
+        DIFFERENTIAL_METHYLATION.out.edger_results
+            .map { file -> ['edger', file] }
+            .set { ch_edger_results }
+        DIFFERENTIAL_METHYLATION.out.methylkit_results
+            .map { file -> ['methylkit', file] }
+            .set { ch_methylkit_results }
+        ch_diff_meth_results = ch_edger_results.mix(ch_methylkit_results)
+
+        ch_diff_meth_results.view { "Differential methylation results: $it" }
 
         // Log the outputs to verify they're not empty
         DIFFERENTIAL_METHYLATION.out.edger_results.view { "EdgeR results: $it" }
         DIFFERENTIAL_METHYLATION.out.methylkit_results.view { "MethylKit results: $it" }
 
         // Result Analysis
+        //log.info "Differential methylation results channel: ${ch_diff_meth_results.dump()}"
+        //log.info "Starting RESULT_ANALYSIS with method: ${params.run_both_methods ? 'both' : params.diff_meth_method}"
+
         if (params.run_both_methods) {
-            log.info "Starting RESULT_ANALYSIS for EdgeR"
-            ch_edger_results = DIFFERENTIAL_METHYLATION.out.edger_results
-                .map { file -> ['edger', file] }
-                .view { "EdgeR results before RESULT_ANALYSIS: $it" }
-                .ifEmpty { error "No EdgeR results found. Please check the DIFFERENTIAL_METHYLATION process." }
-
-            edger_results = RESULT_ANALYSIS(
-                ch_edger_results,
+            log.info "Running RESULT_ANALYSIS for both methods"
+            results = RESULT_ANALYSIS(
+                ch_diff_meth_results,
                 params.compare_str,
                 params.logfc_cutoff,
                 params.pvalue_cutoff,
@@ -131,26 +148,13 @@ workflow {
                 params.hypo_color,
                 params.nonsig_color,
                 ch_gtf,
-                'edger',
-                params.top_n_genes
-            )
-            log.info "Completed RESULT_ANALYSIS for EdgeR"
-
-            methylkit_results = RESULT_ANALYSIS(
-                DIFFERENTIAL_METHYLATION.out.methylkit_results,
-                params.compare_str,
-                params.logfc_cutoff,
-                params.pvalue_cutoff,
-                params.hyper_color,
-                params.hypo_color,
-                params.nonsig_color,
-                ch_gtf,
-                'methylkit',
+                'both',
                 params.top_n_genes
             )
         } else {
+            log.info "Running RESULT_ANALYSIS for ${params.diff_meth_method}"
             results = RESULT_ANALYSIS(
-                params.diff_meth_method == 'edger' ? DIFFERENTIAL_METHYLATION.out.edger_results : DIFFERENTIAL_METHYLATION.out.methylkit_results,
+                ch_diff_meth_results.filter { it[0] == params.diff_meth_method },
                 params.compare_str,
                 params.logfc_cutoff,
                 params.pvalue_cutoff,
