@@ -9,9 +9,7 @@ include { BISMARK_ANALYSIS } from './subworkflows/bismark_analysis'
 include { QC_REPORTING } from './subworkflows/qc_reporting'
 include { DIFFERENTIAL_METHYLATION } from './subworkflows/differential_methylation'
 include { RESULT_ANALYSIS } from './subworkflows/result_analysis'
-
-// Import Post-processing module
-//include { POST_PROCESSING } from './modules/post_processing'
+include { ALIGNED_BAM_WORKFLOW } from './subworkflows/aligned_bam_workflow'
 
 // Show help message
 if (params.help) {
@@ -32,8 +30,15 @@ Twist DNA Methylation Data Analysis Pipeline
 sample sheet : ${params.sample_sheet}
 genome       : ${params.genome_fasta}
 bismark index: ${params.bismark_index}
+aligned bams : ${params.aligned_bams}
 outdir       : ${params.outdir}
 diff method  : ${params.diff_meth_method}
+run both     : ${params.run_both_methods}
+skip diff    : ${params.skip_diff_meth}
+methylkit assembly: ${params.methylkit.assembly}
+methylkit mc_cores: ${params.methylkit.mc_cores}
+methylkit diff   : ${params.methylkit.diff}
+methylkit qvalue : ${params.methylkit.qvalue}
 """
 
 def create_sample_channel(sample_sheet) {
@@ -53,63 +58,123 @@ def create_sample_channel(sample_sheet) {
 // Main workflow
 workflow {
     // Input channels
-    log.info "Creating sample channel from: ${params.sample_sheet}"
-    ch_samples = create_sample_channel(params.sample_sheet)
-    
-    // Genome preparation
-    if (!params.bismark_index) {
-        ch_genome = Channel.fromPath(params.genome_fasta, checkIfExists: true)
-        PREPARE_GENOME(ch_genome)
-        ch_index = PREPARE_GENOME.out.index
+    if (params.aligned_bams) {
+        log.info "Starting from aligned BAM files: ${params.aligned_bams}"
+        ch_aligned_bams = Channel.fromPath(params.aligned_bams)
+        ALIGNED_BAM_WORKFLOW(ch_aligned_bams)
+        ch_coverage_files = ALIGNED_BAM_WORKFLOW.out.coverage_files
+        ch_qc_reports = ALIGNED_BAM_WORKFLOW.out.qc_reports
+    } else if (params.sample_sheet) {
+        log.info "Creating sample channel from: ${params.sample_sheet}"
+        ch_samples = create_sample_channel(params.sample_sheet)
+
+        // Genome preparation
+        if (!params.bismark_index) {
+            ch_genome = Channel.fromPath(params.genome_fasta, checkIfExists: true)
+            PREPARE_GENOME(ch_genome)
+            ch_index = PREPARE_GENOME.out.index
+        } else {
+            ch_index = Channel.fromPath(params.bismark_index, checkIfExists: true)
+        }
+
+        // Read processing
+        READ_PROCESSING(ch_samples)
+
+        // Bismark analysis
+        BISMARK_ANALYSIS(READ_PROCESSING.out.trimmed_reads, ch_index.collect())
+
+        ch_coverage_files = BISMARK_ANALYSIS.out.coverage_files
+        ch_qc_reports = QC_REPORTING(
+            READ_PROCESSING.out.fastqc_reports,
+            READ_PROCESSING.out.trimming_reports,
+            BISMARK_ANALYSIS.out.align_reports,
+            BISMARK_ANALYSIS.out.dedup_reports,
+            BISMARK_ANALYSIS.out.methylation_reports,
+            BISMARK_ANALYSIS.out.summary_report,
+            BISMARK_ANALYSIS.out.qualimap_results
+        )
     } else {
-        ch_index = Channel.fromPath(params.bismark_index, checkIfExists: true)
+        error "Either sample_sheet or aligned_bams must be provided"
     }
 
-    // Read processing
-    READ_PROCESSING(ch_samples)
+    // Create a channel for the RefSeq file
+    ch_refseq = params.refseq_file ? Channel.fromPath(params.refseq_file) : Channel.value(null)
 
-    // Bismark analysis
-    BISMARK_ANALYSIS(READ_PROCESSING.out.trimmed_reads, ch_index.collect())
+    // Create a channel for the GTF file
+    ch_gtf = params.gtf_file ? Channel.fromPath(params.gtf_file) : Channel.value('NO_FILE')
 
-    // QC reporting
-    QC_REPORTING(
-        READ_PROCESSING.out.fastqc_reports,
-        READ_PROCESSING.out.trimming_reports,
-        BISMARK_ANALYSIS.out.align_reports,
-        BISMARK_ANALYSIS.out.dedup_reports,
-        BISMARK_ANALYSIS.out.methylation_reports,
-        BISMARK_ANALYSIS.out.summary_report,
-        BISMARK_ANALYSIS.out.qualimap_results
-    )
+    if (!params.skip_diff_meth) {
+        // Differential Methylation Analysis
+        DIFFERENTIAL_METHYLATION(
+            ch_coverage_files,
+            file(params.sample_sheet),
+            params.compare_str,
+            params.coverage_threshold,
+            params.run_both_methods ? 'both' : params.diff_meth_method,
+            ch_refseq,
+            params.methylkit.assembly,
+            params.methylkit.mc_cores,
+            params.methylkit.diff,
+            params.methylkit.qvalue
+        )
 
-    // Differential Methylation Analysis
-    
-    DIFFERENTIAL_METHYLATION(
-        BISMARK_ANALYSIS.out.coverage_files,
-        file(params.sample_sheet),
-        params.compare_str,
-        params.coverage_threshold
-    )
+        ch_diff_meth_results = Channel.empty()
+        DIFFERENTIAL_METHYLATION.out.edger_results
+            .map { file -> ['edger', file] }
+            .set { ch_edger_results }
+        DIFFERENTIAL_METHYLATION.out.methylkit_results
+            .map { file -> ['methylkit', file] }
+            .set { ch_methylkit_results }
+        ch_diff_meth_results = ch_edger_results.mix(ch_methylkit_results)
 
-    // if a GTF annotation file is included for differential analysis
-    gtf_file = params.gtf ? file(params.gtf) : file('NO_FILE')
+        ch_diff_meth_results.view { "Differential methylation results: $it" }
 
-    RESULT_ANALYSIS(
-        DIFFERENTIAL_METHYLATION.out.results,
-        params.compare_str,
-        params.logfc_cutoff,
-        params.pvalue_cutoff,
-        params.hyper_color,
-        params.hypo_color,
-        params.nonsig_color,
-        gtf_file
-    )
+        // Log the outputs to verify they're not empty
+        DIFFERENTIAL_METHYLATION.out.edger_results.view { "EdgeR results: $it" }
+        DIFFERENTIAL_METHYLATION.out.methylkit_results.view { "MethylKit results: $it" }
+
+        // Result Analysis
+        //log.info "Differential methylation results channel: ${ch_diff_meth_results.dump()}"
+        //log.info "Starting RESULT_ANALYSIS with method: ${params.run_both_methods ? 'both' : params.diff_meth_method}"
+
+        if (params.run_both_methods) {
+            log.info "Running RESULT_ANALYSIS for both methods"
+            results = RESULT_ANALYSIS(
+                ch_diff_meth_results,
+                params.compare_str,
+                params.logfc_cutoff,
+                params.pvalue_cutoff,
+                params.hyper_color,
+                params.hypo_color,
+                params.nonsig_color,
+                ch_gtf,
+                'both',
+                params.top_n_genes
+            )
+        } else {
+            log.info "Running RESULT_ANALYSIS for ${params.diff_meth_method}"
+            results = RESULT_ANALYSIS(
+                ch_diff_meth_results.filter { it[0] == params.diff_meth_method },
+                params.compare_str,
+                params.logfc_cutoff,
+                params.pvalue_cutoff,
+                params.hyper_color,
+                params.hypo_color,
+                params.nonsig_color,
+                ch_gtf,
+                params.diff_meth_method,
+                params.top_n_genes
+            )
+        }
+    } else {
+        log.info "Skipping Differential Methylation Analysis and Result Analysis as requested"
+    }
 }
 
 // Completion handler
 workflow.onComplete {
     log.info "Pipeline completed at: $workflow.complete"
-    log.info "Execution status: ${ workflow.success ? 'OK' : 'failed' }"
+    log.info "Execution status: ${workflow.success ? 'OK' : 'failed'}"
     log.info "Execution duration: $workflow.duration"
 }
 

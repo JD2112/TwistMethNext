@@ -12,7 +12,7 @@ suppressPackageStartupMessages({
 # Parse command line arguments
 option_list <- list(
     make_option(c("--results"), type="character", default=NULL, 
-                help="Path to the EdgeR/MethylKit results file", metavar="FILE"),
+                help="Path to the results file", metavar="FILE"),
     make_option(c("--output"), type="character", default=".", 
                 help="Output directory [default= %default]", metavar="DIR"),
     make_option(c("--top_n"), type="integer", default=100,
@@ -20,27 +20,42 @@ option_list <- list(
     make_option(c("--logfc_cutoff"), type="double", default=0.5, 
                 help="Log2 fold change cutoff [default= %default]", metavar="NUMBER"),
     make_option(c("--pvalue_cutoff"), type="double", default=0.05, 
-                help="P-value cutoff [default= %default]", metavar="NUMBER")
+                help="P-value cutoff [default= %default]", metavar="NUMBER"),
+    make_option(c("--method"), type="character", default="edger",
+                help="Analysis method (edger or methylkit) [default= %default]", metavar="STRING")
 )
 
 opt_parser <- OptionParser(option_list=option_list)
 opt <- parse_args(opt_parser)
 
-# Read EdgeR/MethylKit results
+# Read results
 results <- read.csv(opt$results)
-cat("Results dimensions:", dim(results), "\n")
-cat("Results columns:", paste(colnames(results), collapse=", "), "\n")
+cat(opt$method, "results dimensions:", dim(results), "\n")
+cat(opt$method, "results columns:", paste(colnames(results), collapse=", "), "\n")
+
+# Define column names based on the method
+if (opt$method == "edger") {
+    logfc_col <- "logFC"
+    pvalue_col <- "PValue"
+    symbol_col <- "Symbol"
+} else if (opt$method == "methylkit") {
+    logfc_col <- "meth.diff"
+    pvalue_col <- "qvalue"
+    symbol_col <- "SYMBOL"
+} else {
+    stop("Unknown method. Use 'edger' or 'methylkit'.")
+}
 
 # Filter and sort results
 filtered_results <- results %>%
-    filter(abs(logFC) >= opt$logfc_cutoff, PValue < opt$pvalue_cutoff) %>%
-    arrange(PValue) %>%
+    filter(abs(!!sym(logfc_col)) >= opt$logfc_cutoff, !!sym(pvalue_col) < opt$pvalue_cutoff) %>%
+    arrange(!!sym(pvalue_col)) %>%
     head(opt$top_n)
 
 cat("Filtered results dimensions:", dim(filtered_results), "\n")
 
-# Extract gene symbols (assuming they are in a column named 'Symbol')
-genes <- filtered_results$Symbol
+# Extract gene symbols
+genes <- filtered_results[[symbol_col]]
 
 if(length(genes) == 0) {
     stop("No genes passed the filtering criteria. Try adjusting the logfc_cutoff and pvalue_cutoff.")
@@ -69,7 +84,7 @@ chord_data <- data.frame(
 
 # Add logFC to chord_data
 chord_data$logFC <- sapply(strsplit(chord_data$Genes, ","), function(x) {
-    mean(filtered_results$logFC[match(x, filtered_results$Symbol)], na.rm = TRUE)
+    mean(filtered_results[[logfc_col]][match(x, filtered_results[[symbol_col]])], na.rm = TRUE)
 })
 
 cat("Chord data dimensions:", dim(chord_data), "\n")
@@ -87,7 +102,7 @@ for(i in 1:nrow(chord_data)) {
 }
 
 # Add logFC as a column to mat
-mat <- cbind(mat, logFC = filtered_results$logFC[match(rownames(mat), filtered_results$Symbol)])
+mat <- cbind(mat, logFC = filtered_results[[logfc_col]][match(rownames(mat), filtered_results[[symbol_col]])])
 
 cat("Matrix dimensions:", dim(mat), "\n")
 print(head(mat))
@@ -110,18 +125,18 @@ generate_gochord_plot <- function(file_path, width, height) {
 }
 
 # Generate PNG file
-png(file.path(opt$output, "gochord_plot.png"), width = 16.5, height = 14, units = "in", res = 300)
+png(file.path(opt$output, paste0(opt$method, "_gochord_plot.png")), width = 16.5, height = 14, units = "in", res = 300)
 generate_gochord_plot()
 dev.off()
 
 # Generate SVG file
-svg(file.path(opt$output, "gochord_plot.svg"), width = 36, height = 36)
+svg(file.path(opt$output, paste0(opt$method, "_gochord_plot.svg")), width = 36, height = 36)
 generate_gochord_plot()
 dev.off()
 
 cat("GOChord plots saved as PNG and SVG in", opt$output, "\n")
 
 # Save GO enrichment results
-write.csv(go_enrichment@result, file.path(opt$output, "go_enrichment_results.csv"), row.names = FALSE)
+write.csv(go_enrichment@result, file.path(opt$output, paste0(opt$method, "_go_enrichment_results.csv")), row.names = FALSE)
 
 cat("GO analysis complete. Results saved in", opt$output, "\n")

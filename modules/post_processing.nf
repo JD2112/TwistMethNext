@@ -2,7 +2,7 @@ process POST_PROCESSING {
     label 'process_medium'
 
     input:
-    path results
+    tuple val(method), path(results)
     val compare_str
     val logfc_cutoff
     val pvalue_cutoff
@@ -11,16 +11,19 @@ process POST_PROCESSING {
     val nonsig_color
 
     output:
-    path "summary_stats.csv", emit: summary
-    path "*.png", emit: plots
+    tuple val(method), path("${method}_summary_stats.csv"), emit: summary
+    tuple val(method), path("${method}_*.png"), emit: plots
     path "versions.yml", emit: versions
 
     script:
+    def results_file = results instanceof Path ? results : results[1]
+
     """
     Rscript ${workflow.projectDir}/bin/post_processing.R \
-        --results ${results} \
+        --results ${results_file} \
         --compare "${compare_str}" \
         --output . \
+        --method ${method} \
         --logfc_cutoff ${logfc_cutoff} \
         --pvalue_cutoff ${pvalue_cutoff} \
         --hyper_color "${hyper_color}" \
@@ -28,6 +31,7 @@ process POST_PROCESSING {
         --nonsig_color "${nonsig_color}"
 
     cat <<-END_VERSIONS > versions.yml
+    
     "${task.process}":
         r-base: \$(R --version | grep "R version" | sed 's/R version //' | sed 's/ .*//')
         ggplot2: \$(Rscript -e "library(ggplot2); cat(as.character(packageVersion('ggplot2')))")

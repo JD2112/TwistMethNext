@@ -83,7 +83,7 @@ process BISMARK_DEDUPLICATE {
 
     output:
     tuple val(meta), path("*.deduplicated.bam"), emit: deduplicated_bam
-    tuple val(meta), path("*.deduplication_report.txt"), emit: report
+    tuple val(meta), path("*.deduplication_report.txt"), emit: dedup_report
     path "versions.yml"           , emit: versions
 
     script:
@@ -119,7 +119,7 @@ process BISMARK_METHYLATION_EXTRACTOR {
     output:
     tuple val(meta), path("*.bedGraph.gz"), emit: bedgraph
     tuple val(meta), path("*.bismark.cov.gz"), emit: coverage
-    tuple val(meta), path("*_splitting_report.txt"), emit: report
+    tuple val(meta), path("*_splitting_report.txt"), emit: splitting_report
     //tuple val(meta), path("*M-bias.txt"), emit: mbias_report, optional: true 
     path "versions.yml", emit: versions
 
@@ -134,23 +134,29 @@ process BISMARK_METHYLATION_EXTRACTOR {
 }
 
 process BISMARK_REPORT {
-    label 'process_low'
+    label 'process_low'    
 
     input:
     tuple val(meta), path(reports)
 
     output:
-    path "*.html", emit: summary_report
+    path "${meta.id}_bismark_report.html", emit: summary_report
     path "versions.yml", emit: versions
 
     script:
     def prefix = meta.id
     """
+    # Find the specific reports
+    align_report=\$(find . -name "*_SE_report.txt" -o -name "*_PE_report.txt")
+    dedup_report=\$(find . -name "*.deduplication_report.txt")
+    splitting_report=\$(find . -name "*_splitting_report.txt")
+
     bismark2report \
-        --alignment_report *report.txt \
-        --dedup_report *.deduplication_report.txt \
-        --splitting_report *_splitting_report.txt
-        
+        --alignment_report \$align_report \
+        --dedup_report \$dedup_report \
+        --splitting_report \$splitting_report \
+        --output ${prefix}_bismark_report.html
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         bismark: \$( bismark --version | sed -e "s/Bismark Version: v//g" )

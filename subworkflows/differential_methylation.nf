@@ -3,44 +3,75 @@ include { METHYLKIT_ANALYSIS } from '../modules/methylkit'
 
 workflow DIFFERENTIAL_METHYLATION {
     take:
-    coverage_files    // Channel: [ val(meta), path(coverage) ]
-    design_file       // Path: design file
-    compare_str       // String: comparison string
-    coverage_threshold // Integer: coverage threshold
+    coverage_files
+    design_file
+    compare_str
+    coverage_threshold
+    method
+    refseq_file
+    methylkit_assembly
+    methylkit_mc_cores
+    methylkit_diff
+    methylkit_qvalue
 
-    main:
+    main:    
     ch_versions = Channel.empty()
+    ch_edger_results = Channel.empty()
+    ch_methylkit_results = Channel.empty()
 
     // Prepare the coverage files channel
     coverage_files_prepared = coverage_files
-        .map { meta, file -> file }
+        .map { meta, file -> 
+            return file 
+        }
         .collect()
+    
+    //log.info "DIFFERENTIAL_METHYLATION: Prepared coverage files: ${coverage_files_prepared}"
 
-    if (params.diff_meth_method == 'edger') {
+    if (method == 'edger' || method == 'both') {
+        //log.info "DIFFERENTIAL_METHYLATION: Running EdgeR analysis"        
         EDGER_ANALYSIS (
-            //coverage_files.map { meta, file -> file }.collect(), //coverage_files,
             coverage_files_prepared,
             design_file,
             compare_str,
             coverage_threshold
         )
-        ch_results = EDGER_ANALYSIS.out.results
+        ch_edger_results = EDGER_ANALYSIS.out.results
         ch_versions = ch_versions.mix(EDGER_ANALYSIS.out.versions)
-    } else if (params.diff_meth_method == 'methylkit') {
-        METHYLKIT_ANALYSIS (
-            //coverage_files.map { meta, file -> file }.collect(),
-            coverage_files_prepared,
-            design_file,
-            compare_str,
-            coverage_threshold
-        )
-        ch_results = METHYLKIT_ANALYSIS.out.results
-        ch_versions = ch_versions.mix(METHYLKIT_ANALYSIS.out.versions)
-    } else {
-        error "Invalid differential methylation method: ${params.diff_meth_method}. Choose either 'edger' or 'methylkit'."
+        //log.info "DIFFERENTIAL_METHYLATION: EdgeR analysis completed"        
     }
 
+    if (method == 'methylkit' || method == 'both') {
+        //log.info "DIFFERENTIAL_METHYLATION: Running MethylKit analysis"        
+        try {
+            METHYLKIT_ANALYSIS (
+                coverage_files_prepared,
+                design_file,
+                compare_str,
+                coverage_threshold,
+                refseq_file,
+                methylkit_assembly,
+                methylkit_mc_cores,
+                methylkit_diff,
+                methylkit_qvalue
+            )
+            ch_methylkit_results = METHYLKIT_ANALYSIS.out.results
+            ch_versions = ch_versions.mix(METHYLKIT_ANALYSIS.out.versions)
+            //log.info "DIFFERENTIAL_METHYLATION: MethylKit analysis completed"            
+        } catch (Exception e) {
+            //log.error "DIFFERENTIAL_METHYLATION: Error in METHYLKIT_ANALYSIS: ${e.message}"
+            e.printStackTrace()
+        }
+    }
+
+    // Combine the results for RESULT_ANALYSIS
+    // ch_combined_results = ch_edger_results
+    //     .mix(ch_methylkit_results)
+    //     .ifEmpty { error "No results generated from either EdgeR or MethylKit" }
+
     emit:
-    results  = ch_results    // Channel: [ path(results) ]
-    versions = ch_versions   // Channel: [ path(versions.yml) ]
+    edger_results = ch_edger_results
+    methylkit_results = ch_methylkit_results
+    //combined_results = ch_combined_results
+    versions = ch_versions
 }

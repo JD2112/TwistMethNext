@@ -1,20 +1,16 @@
 process GO_ANALYSIS {
     label 'process_medium'
 
-    // conda "bioconda::r-goplot=1.0.2 bioconda::bioconductor-org.hs.eg.db=3.14.0 bioconda::bioconductor-clusterprofiler=4.2.2"
-    // container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-    //     'https://depot.galaxyproject.org/singularity/mulled-v2-9aba8bf2acb0f2ca4c3d1e8f99cdb6be5b649de7:6c6c5d45a8a0d6c0e0c5a5a5a5a5a5a5a5a5a5a' :
-    //     'quay.io/biocontainers/mulled-v2-9aba8bf2acb0f2ca4c3d1e8f99cdb6be5b649de7:6c6c5d45a8a0d6c0e0c5a5a5a5a5a5a5a5a5a5a' }"
-
     input:
-    path results
+    tuple val(method), path(results)
     val logfc_cutoff
     val pvalue_cutoff
+    val top_n
 
     output:
-    path "gochord_plot.png", emit: plot
-    path "gochord_plot.svg", emit: goplot
-    path "go_enrichment_results.csv", emit: results
+    tuple val(method), path("${method}_gochord_plot.png"), emit: plot
+    tuple val(method), path("${method}_gochord_plot.svg"), emit: goplot
+    tuple val(method), path("${method}_go_enrichment_results.csv"), emit: results
     path "versions.yml", emit: versions
 
     script:
@@ -22,8 +18,10 @@ process GO_ANALYSIS {
     Rscript ${workflow.projectDir}/bin/go_analysis.R \
         --results ${results} \
         --output . \
+        --method ${method} \
         --logfc_cutoff ${logfc_cutoff} \
-        --pvalue_cutoff ${pvalue_cutoff}
+        --pvalue_cutoff ${pvalue_cutoff} \
+        --top_n ${top_n}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -1,36 +1,51 @@
 process METHYLKIT_ANALYSIS {
     tag "MethylKit on ${design_file}"
-    label 'process_medium'
-
-    // conda "bioconda::r-methylkit=1.20.0 bioconda::bioconductor-org.hs.eg.db=3.14.0 bioconda::r-genomation=1.26.0"
-    // container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-    //     'https://depot.galaxyproject.org/singularity/mulled-v2-9d3a7d03d8a3d72734447ab1fd6bc3dd3c0e815e:3a6d3e1f1a7a3e0b8f9d9b3b3e3f3d3c3b3a3d3e' :
-    //     'quay.io/biocontainers/mulled-v2-9d3a7d03d8a3d72734447ab1fd6bc3dd3c0e815e:3a6d3e1f1a7a3e0b8f9d9b3b3e3f3d3c3b3a3d3e' }"
+    label 'process_high'    
 
     input:
     path coverage_files
     path design_file
     val compare_str
-    val threshold
+    val coverage_threshold
+    path refseq_file
+    val assembly
+    val mc_cores
+    val diff
+    val qvalue
 
     output:
-    path "*.csv"        , emit: results
-    path "versions.yml" , emit: versions
-
-    when:
-    task.ext.when == null || task.ext.when
+    tuple val('methylkit'), path("MethylKit_*.csv"), emit: results
+    path "versions.yml", emit: versions
+    path "methylkit_log.txt", emit: log
 
     script:
     def args = task.ext.args ?: ''
     def coverage_files_str = coverage_files.join(',')
+    def refseq_param = refseq_file ? "--refseq ${refseq_file}" : ""
     """
-    Rscript ${projectDir}/bin/run_methylkit.R \\
+    echo "Starting MethylKit analysis" > methylkit_log.txt
+    echo "Coverage files: ${coverage_files_str}" >> methylkit_log.txt
+    echo "Design file: ${design_file}" >> methylkit_log.txt
+    echo "Compare string: ${compare_str}" >> methylkit_log.txt
+    echo "Threshold: ${coverage_threshold}" >> methylkit_log.txt
+    echo "RefSeq file: ${refseq_file}" >> methylkit_log.txt
+    echo "Assembly: ${assembly}" >> methylkit_log.txt
+    echo "MC cores: ${mc_cores}" >> methylkit_log.txt
+    echo "Difference threshold: ${diff}" >> methylkit_log.txt
+    echo "Q-value threshold: ${qvalue}" >> methylkit_log.txt
+
+    Rscript ${projectDir}/bin/methylkit_analysis.R \\
         --coverage_files ${coverage_files_str} \\
         --design ${design_file} \\
         --compare ${compare_str} \\
         --output . \\
-        --threshold ${threshold} \\
-        $args
+        --threshold ${coverage_threshold} \\
+        ${refseq_param} \\
+        --assembly ${assembly} \\
+        --mc_cores ${mc_cores} \\
+        --diff ${diff} \\
+        --qvalue ${qvalue} \\
+        $args >> methylkit_log.txt 2>&1
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
