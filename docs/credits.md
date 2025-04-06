@@ -13,7 +13,7 @@ Das, J. (2024). TwistNext (v1.0.0). Zenodo.[ https://doi.org/10.5281/zenodo.1420
 
 ### HELP/FAQ/Troubleshooting
 
-Please check the [manual](usage/) for details.
+Please check the [manual](usage/README.md) for details.
 
 Please create[ issues](https://github.com/JD2112/TwistNext/issues) on github.
 

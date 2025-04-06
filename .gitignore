@@ -3,7 +3,6 @@ work/
 .DS_Store
 .nextflow/
 pipeline_info/
-docs/
 *.sif
 Results/
 # workflows/
@@ -12,3 +11,4 @@ data/*.gz
 *.dot
 protocols/
 nf-results/
+files-dump/
