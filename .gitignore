@@ -10,3 +10,5 @@ workflows/
 data/*.gtf
 data/*.gz
 *.dot
+protocols/
+nf-results/

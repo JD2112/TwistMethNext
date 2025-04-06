@@ -1,4 +1,4 @@
-![](artworks/logo.png)
+![](artworks/twistmethnext.png)
 
 [![DOI](https://zenodo.org/badge/490592846.svg)](https://doi.org/10.5281/zenodo.14204261)
 [![GitBook Docs](https://img.shields.io/badge/docs-GitBook-blue?logo=gitbook)](https://jyotirmoys-organization.gitbook.io/twistnext)
