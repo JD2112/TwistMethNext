@@ -1,10 +1,5 @@
 ---
-cover: .gitbook/assets/logo.png
-coverY: 0
 layout:
-  cover:
-    visible: true
-    size: hero
   title:
     visible: true
   description:
