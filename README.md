@@ -57,6 +57,8 @@ nextflow run JD2112/TwistNext \
     --sample_sheet Sample_sheet_twist.csv \
     --genome_fasta /data/reference_genome/hg38/hg38.fa \ 
     --run_both_methods \
+    --gtf_file /data/Homo_sapiens.GRCh38.104.gtf \
+    --refseq_file /data/hg19_RefSeq.bed.gz \
     --outdir Results/TwistNext_both 
 
 
@@ -66,7 +68,9 @@ nextflow run JD2112/TwistNext \
     -profile singularity \
     --sample_sheet Sample_sheet_twist.csv \
     --bismark_index /data/reference_genome/hg38/ \ 
-    --run_both_methods
+    --run_both_methods \
+    --gtf_file /data/Homo_sapiens.GRCh38.104.gtf \
+    --refseq_file /data/hg19_RefSeq.bed.gz \    
     --outdir /mnt/Results/TwistNext_both
 ```
 
@@ -81,6 +85,7 @@ nextflow run JD2112/TwistNext \
     --sample_sheet Sample_sheet_twist.csv \
     --genome_fasta /data/reference_genome/hg38/hg38.fa \ 
     --diff_meth_method edger \
+    --refseq_file /data/hg19_RefSeq.bed.gz \
     --outdir Results/TwistNext_edgeR 
 
 
@@ -91,6 +96,7 @@ nextflow run JD2112/TwistNext \
     --sample_sheet Sample_sheet_twist.csv \
     --bismark_index /data/reference_genome/hg38/ \ 
     --diff_meth_method edger \
+    --refseq_file /data/hg19_RefSeq.bed.gz \
     --outdir /mnt/Results/TwistNext_edgeR 
 ```
 
@@ -104,6 +110,7 @@ nextflow run JD2112/TwistNext \
     --sample_sheet Sample_sheet_twist.csv \
     --genome_fasta /data/reference_genome/hg38/hg38.fa \ 
     --diff_meth_method methylkit \
+    --gtf_file /data/Homo_sapiens.GRCh38.104.gtf \
     --outdir Results/TwistNext_methylKit 
 
 
@@ -114,6 +121,7 @@ nextflow run JD2112/TwistNext \
     --sample_sheet Sample_sheet_twist.csv \
     --bismark_index /data/reference_genome/hg38/ \ 
     --diff_meth_method methylkit \
+    --gtf_file /data/Homo_sapiens.GRCh38.104.gtf \
     --outdir Results/TwistNext_methylKit 
 ```
 ## Options:
@@ -124,6 +132,8 @@ nextflow run JD2112/TwistNext \
 | `--bismark_index`      | Path to the Bismark index directory (required unless `--genome` or `--aligned_bams` is provided) |
 | `--genome`             | Path to the reference genome FASTA file (required if `--bismark_index` not provided)| 
 | `--aligned_bams`       | Path to aligned BAM files (use this to start from aligned BAM files instead of FASTQ files) |
+| `--refseq_file`        | Path to RefSeq file for annotation (reuired to run `both` or `methylkit`)  |
+| `--gtf_file`           | Path to GTF file for annotation (reuired to run `both` or `edger`)  |
 | `--outdir`             | Output directory (default: ./results) |
 | `--diff_meth_method`   | Differential methylation method to use: 'edger' or 'methylkit' (default: edger) | 
 | `--run_both_methods`   | Run both edgeR and methylkit for differential methylation analysis (default: false) | 
@@ -135,8 +145,6 @@ nextflow run JD2112/TwistNext \
 | `--hypo_cutoff`        | Hypomethylation color for Volcano or MA plot (default: blue) |
 | `--nonsig_color`       | Non-significant color for Volcano or MA plot (default: black) |
 | `--compare_str`        | Comparison string for differential analysis (e.g. "Group1-Group2")  |
-| `--refseq_file`        | Path to RefSeq file for annotation (optional)  |
-| `--gtf_file`           | Path to GTF file for annotation (optional)  |
 | `--top_n_genes`        | Number of top differentially methylated genes to report for GOplot (default: 100) |
 | `--help`               | Show this help message and exit   | 
 
@@ -173,4 +181,4 @@ Please create [issues](https://github.com/JD2112/TwistNext/issues) on github.
 
 ## Acknowledgement
 
-We would like to acknowledge the **Core Facility, Faculty of Medicine and Health Sciences, Linköping University, Linköping, Sweden** and **Clinical Genomics Linköping, Science for Life Laboratory, Sweden** for their support.
+We would like to acknowledge the **Core Facility, Faculty of Medicine and Health Sciences, Linköping University, Linköping, Sweden** and **Clinical Genomics Linköping, Science for Life Laboratory, Sweden** for their support. We are grateful to PDC (KTH, Sweden) support for computational support to test and validate the pipeline on the Dardel HPC.

@@ -16,9 +16,11 @@ process POST_PROCESSING {
     path "versions.yml", emit: versions
 
     script:
+    def results_file = results instanceof Path ? results : results[1]
+
     """
     Rscript ${workflow.projectDir}/bin/post_processing.R \
-        --results ${results} \
+        --results ${results_file} \
         --compare "${compare_str}" \
         --output . \
         --method ${method} \
@@ -29,6 +31,7 @@ process POST_PROCESSING {
         --nonsig_color "${nonsig_color}"
 
     cat <<-END_VERSIONS > versions.yml
+    
     "${task.process}":
         r-base: \$(R --version | grep "R version" | sed 's/R version //' | sed 's/ .*//')
         ggplot2: \$(Rscript -e "library(ggplot2); cat(as.character(packageVersion('ggplot2')))")
