@@ -21,7 +21,7 @@ jobs:
       - name: Obtain version from nextflow config
         run: |
           version=$(grep "version" nextflow.config | tail -1 | sed -e s'/[^=]*= //' | cut -d "'" -f 2)
-          [[ $version == *"dev"* ]] && pipeline_version="dev" || pipeline_version=$version
+          [[ $version == *"devel"* ]] && pipeline_version="devel" || pipeline_version=$version
           echo "pipeline_version=$pipeline_version" >> $GITHUB_ENV
       - name: Setup git user
         run: |
@@ -37,6 +37,6 @@ jobs:
         run: pip install mkdocs-material pymdown-extensions pillow cairosvg mike
       - name: Build docs
         run: |
-          [[ ${{ env.pipeline_version }} == "dev" ]] && mike deploy --push ${{ env.pipeline_version }} || mike deploy --push --update-aliases ${{ env.pipeline_version }} latest
+          [[ ${{ env.pipeline_version }} == "devel" ]] && mike deploy --push ${{ env.pipeline_version }} || mike deploy --push --update-aliases ${{ env.pipeline_version }} latest
       - name: Set default docs
         run: mike set-default --push latest
