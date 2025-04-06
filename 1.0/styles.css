@@ -1,0 +1,182 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    padding: 0;
+    color: #333;
+    background: #f8f9fa;
+  }
+  
+header {
+  background: #007acc;
+  color: #fff;
+  padding: 20px 0;
+  text-align: center;
+}
+header img {
+    max-height: 50px;
+  }
+header h1 {
+  margin: 0;
+}
+/* Navigation styles */
+nav {
+    display: flex;
+    justify-content: space-around;
+    background: #333;
+    color: #fff;
+    padding: 10px;
+  }
+  
+  nav a, .dropdown-button {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  nav a:hover, .dropdown-button:hover {
+    background: #555;
+  }
+  
+  /* Dropdown menu styles */
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    flex-direction: column;
+  }
+  
+  .dropdown-content a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: #555;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block; /* Show the dropdown menu when hovered */
+  }
+  
+main {
+  padding: 20px;
+  max-width: 800px;
+  margin: 20px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+h2 {
+  color: #007acc;
+}
+section {
+    margin-bottom: 20px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  table th {
+    background: #007acc;
+    color: #fff;
+  }
+  pre {
+    background: #f4f4f4; /* Light gray background */
+    border: 1px solid #ddd; /* Thin border */
+    border-radius: 4px; /* Slightly rounded corners */
+    padding: 10px; /* Add some padding */
+    overflow-x: auto; /* Allow horizontal scrolling for long lines */
+  }
+  
+  code {
+    font-family: 'Courier New', Courier, monospace; /* Use monospaced font */
+    color: #333; /* Dark text color */
+  }
+  
+.page-container {
+    flex: 1; /* Allows the content to grow while ensuring footer stays at the bottom */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  main {
+    flex: 1; /* Pushes the footer to the bottom of the page if content is short */
+  }
+  
+  /* Footer styling */
+  footer {
+    background: #333;
+    color: #fff;
+    padding: 20px 0;
+    font-size: 0.9em;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  .footer-container {
+    display: flex;
+    justify-content: space-between; /* Space out the three columns */
+    align-items: center;
+    max-width: 1200px; /* Limit the footer width */
+    margin: 0 auto; /* Center the footer content */
+    padding: 0 20px;
+  }
+  
+  .footer-left,
+  .footer-center,
+  .footer-right {
+    flex: 1; /* Equal space for all columns */
+    text-align: center; /* Default to center for smaller screens */
+  }
+  
+  .footer-left {
+    text-align: left; /* Left-align on larger screens */
+  }
+  
+  .footer-right {
+    text-align: right; /* Right-align on larger screens */
+  }
+  
+  footer a {
+    color: #80c7ff;
+    text-decoration: none;
+  }
+  
+  footer a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Responsive footer for smaller screens */
+  @media (max-width: 768px) {
+    .footer-container {
+      flex-direction: column; /* Stack columns vertically */
+      text-align: center;
+    }
+    .footer-left,
+    .footer-center,
+    .footer-right {
+      margin-bottom: 10px;
+    }
+  }

@@ -1,0 +1,47 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    line-height: 1.6;
+  }
+  .container {
+    width: 90%;
+    margin: 0 auto;
+    max-width: 1200px;
+  }
+  .header, .footer {
+    background: #007acc;
+    color: white;
+    padding: 1rem 0;
+  }
+  .hero {
+    background: url('artworks/background.jpg') no-repeat center center/cover;
+    color: white;
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  .hero .logo {
+    max-width: 150px;
+  }
+  .button {
+    display: inline-block;
+    background: #007acc;
+    color: white;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+  .button.secondary {
+    background: #555;
+  }
+  footer {
+    text-align: center;
+    padding: 1rem 0;
+  }
+  .workflow-img {
+    max-width: 100%;
+    height: auto;
+    margin: 2rem 0;
+  }
+  

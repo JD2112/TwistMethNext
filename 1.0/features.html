@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TwistNext - Features</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>TwistNext - Features</h1>
+    <nav>
+      <a href="index.html">Overview</a>
+      <a href="features.html">Features</a>
+      <a href="schema.html">Pipeline Schema</a>
+      <a href="usage.html">Usage</a>
+      <a href="credits.html">Credits</a>
+    </nav>
+  </header>
+  <main>
+    <section>
+      <h2>Features</h2>
+      <table>
+        <thead>
+        <tr>
+        <th>Step</th>
+        <th>Workflow</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>Generate Reference Genome Index (optional)</td>
+        <td>Bismark</td>
+        </tr>
+        <tr>
+        <td>Raw data QC</td>
+        <td>FastQC</td>
+        </tr>
+        <tr>
+        <td>Adapter sequence trimming</td>
+        <td>Trim Galore</td>
+        </tr>
+        <tr>
+        <td>Align Reads</td>
+        <td>Bismark (bowtie2)</td>
+        </tr>
+        <tr>
+        <td>Deduplicate Alignments</td>
+        <td>Bismark</td>
+        </tr>
+        <tr>
+        <td>Sort and indexing</td>
+        <td>Samtools</td>
+        </tr>
+        <tr>
+        <td>Extract Methylation Calls</td>
+        <td>Bismark</td>
+        </tr>
+        <tr>
+        <td>Sample Report</td>
+        <td>Bismark</td>
+        </tr>
+        <tr>
+        <td>Summary Report</td>
+        <td>Bismark</td>
+        </tr>
+        <tr>
+        <td>Alignment QC</td>
+        <td>Qualimap</td>
+        </tr>
+        <tr>
+        <td>QC Reporting</td>
+        <td>MultiQC</td>
+        </tr>
+        <tr>
+        <td>Differential Methylation Analysis</td>
+        <td>EdgeR/MethylKit</td>
+        </tr>
+        <tr>
+        <td>Post processing</td>
+        <td>ggplot2</td>
+        </tr>
+        </tbody>
+        </table>
+        <h2 id="detailed-description-of-each-main-step-">Detailed description of each main step:</h2>
+            <ol>
+            <li><p><strong>READ_PROCESSING:</strong> Checks the quality of raw sequencing data and trims low-quality bases and adapters to improve downstream analysis.</p>
+            </li>
+            <li><p><strong>BISMARK_ANALYSIS:</strong> Aligns bisulfite-converted reads to a reference genome, identifies and removes PCR duplicates, sorts and indexes the aligned reads, performs quality control on alignments, and extracts methylation information from the aligned reads.</p>
+            </li>
+            <li><p><strong>QC_REPORTING:</strong> Compiles quality control metrics from various steps into a comprehensive report for easy interpretation.</p>
+            </li>
+            <li><p><strong>DIFFERENTIAL_METHYLATION:</strong></p>
+            <ul>
+            <li><em>EDGER_ANALYSIS:</em> <ul>
+            <li>Takes coverage files, a design file, and comparison information as input.</li>
+            <li>Performs differential methylation analysis using the EdgeR Bioconductor package.</li>
+            <li>Outputs CSV files with differential methylation results for each group comparison.
+            <em>METHYLKIT_ANALYSIS:</em></li>
+            <li>Takes coverage files, a design file, and comparison information as input.</li>
+            <li>Performs differential methylation analysis using the EdgeR Bioconductor package.</li>
+            <li>Outputs CSV files with differential methylation results for each group comparison.</li>
+            </ul>
+            </li>
+            </ul>
+            </li>
+            <li><p><strong>POST_PROCESSING:</strong></p>
+            <ul>
+            <li>Reads the EdgeR results and generates:</li>
+            <li>Summary statistics (total DMRs, hyper/hypomethylated regions, significant DMRs)</li>
+            <li>Volcano plot (visualizing fold change vs. significance)</li>
+            <li>MA plot (visualizing intensity vs. fold change)</li>
+            <li>Outputs summary statistics CSV, visualization plots, and version information.</li>
+            </ul>
+            </li>
+            </ol>
+
+    </section>
+  </main>
+  <footer>
+    <div class="footer-container">
+      <div class="footer-left">
+        <p>&copy; 2024 TwistNext</p>
+      </div>
+      <div class="footer-center">
+        <p>Developed by <a href="https://github.com/JD2112">Jyotirmoy Das</a></p>
+      </div>
+      <div class="footer-right">
+        <p>
+          <a href="https://doi.org/10.5281/zenodo.14204260">DOI: 10.5281/zenodo.14204260</a>
+          |
+          <a href="https://github.com/JD2112/TwistNext">GitHub Repository</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+  
+</body>
+</html>
