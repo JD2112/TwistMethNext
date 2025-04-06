@@ -6,7 +6,9 @@ pipeline_info/
 docs/
 *.sif
 Results/
-workflows/
+# workflows/
 data/*.gtf
 data/*.gz
 *.dot
+protocols/
+nf-results/
