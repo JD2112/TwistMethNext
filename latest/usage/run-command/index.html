@@ -470,16 +470,16 @@
 
 <h1 id="run-command">Run command<a class="headerlink" href="#run-command" title="Permanent link">&para;</a></h1>
 <h3 id="option-1-without-cloning-the-repo">Option 1: Without cloning the repo<a class="headerlink" href="#option-1-without-cloning-the-repo" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>nextflow run JD2112/TwistNext -r main \
+<div class="highlight"><pre><span></span><code>nextflow run JD2112/TwistMethNext -r main \
     -profile singularity \
     --sample_sheet Sample_sheet_twist.csv \
     --genome_fasta /data/reference_genome/hg38/hg38.fa \ 
     --diff_meth_method edger \
-    --outdir Results/TwistNext_edgeR 
+    --outdir Results/TwistMethNext_edgeR 
 </code></pre></div>
 <h3 id="option-2-clone-the-git-repo">Option 2: Clone the git repo<a class="headerlink" href="#option-2-clone-the-git-repo" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>git clone https://github.com/JD2112/TwistNext.git
-cd TwistNext
+<div class="highlight"><pre><span></span><code>git clone https://github.com/JD2112/TwistMethNext.git
+cd TwistMethNext
 </code></pre></div>
 <h3 id="with-the-reference-genome-genome_fasta">With the reference genome, --genome_fasta<a class="headerlink" href="#with-the-reference-genome-genome_fasta" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>nextflow run main.nf \
@@ -487,7 +487,7 @@ cd TwistNext
     --sample_sheet Sample_sheet_twist.csv \
     --genome_fasta data/reference_genome/hg38/hg38.fa \ 
     --diff_meth_method edger \
-    --outdir /mnt/SD3/test_twistNext_dagTest_edgeR 
+    --outdir /mnt/SD3/test_twistMethNext_dagTest_edgeR 
 </code></pre></div>
 <h3 id="with-the-bisulfite-index-bismark_index">With the bisulfite index, --bismark_index<a class="headerlink" href="#with-the-bisulfite-index-bismark_index" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>nextflow run main.nf \
@@ -495,7 +495,7 @@ cd TwistNext
     --sample_sheet Sample_sheet_twist.csv \
     --bismark_index /data/reference_genome/hg38/ \ 
     --diff_meth_method edger \
-    --outdir /mnt/Results/test_twistNext_dagTest_edgeR 
+    --outdir /mnt/Results/test_twistMethNext_dagTest_edgeR 
 </code></pre></div>
 <p><strong>Use <code>--diff_meth_method</code></strong> <strong><code>methylkit</code> to run MethylKit analysis.</strong></p>
 <h3 id="help">Help<a class="headerlink" href="#help" title="Permanent link">&para;</a></h3>
