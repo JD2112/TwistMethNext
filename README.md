@@ -1,8 +1,8 @@
 ![](artworks/twistmethnext.png)
 
 [![DOI](https://zenodo.org/badge/490592846.svg)](https://doi.org/10.5281/zenodo.14204261)
-[![GitBook Docs](https://img.shields.io/badge/docs-GitBook-blue?logo=gitbook)](https://jyotirmoys-organization.gitbook.io/twistnext)
-[![GitHub Invite Collaborators](https://img.shields.io/badge/Invite-Collaborators-blue?style=for-the-badge&logo=github)](https://github.com/JD2112/TwistNext/settings/access)
+[![GitBook Docs](https://img.shields.io/badge/docs-GitBook-blue?logo=gitbook)](https://jyotirmoys-organization.gitbook.io/TwistMethNext)
+[![GitHub Invite Collaborators](https://img.shields.io/badge/Invite-Collaborators-blue?style=for-the-badge&logo=github)](https://github.com/JD2112/TwistMethNext/settings/access)
 
 [![wakatime](https://wakatime.com/badge/user/fe95275f-909a-4147-a45d-624981173898/project/a44415f0-a274-4c3b-a59a-f8e1067c0fc1.svg)](https://wakatime.com/badge/user/fe95275f-909a-4147-a45d-624981173898/project/a44415f0-a274-4c3b-a59a-f8e1067c0fc1)
 
@@ -41,9 +41,9 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 - Java (>=8)
 
 ## Usage
-1. User can start from the FASTQ files or Bismark aligned BAM files. Find the details on the [manual](https://jyotirmoys-organization.gitbook.io/twistnext)
+1. User can start from the FASTQ files or Bismark aligned BAM files. Find the details on the [manual](https://jyotirmoys-organization.gitbook.io/TwistMethNext)
 
-2. User can choose to run the differential methylation analysis - either EdgeR or MethylKit or both. Find the details on the [manual](https://jyotirmoys-organization.gitbook.io/twistnext)
+2. User can choose to run the differential methylation analysis - either EdgeR or MethylKit or both. Find the details on the [manual](https://jyotirmoys-organization.gitbook.io/TwistMethNext)
 
 3. User can also use `--skip_diff_meth` to avoid the differential methylation analysis.
 
@@ -52,26 +52,26 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 ```
 # when using the reference genome indexing, --genome_fasta
 
-nextflow run JD2112/TwistNext \
+nextflow run JD2112/TwistMethNext \
     -profile singularity \
     --sample_sheet Sample_sheet_twist.csv \
     --genome_fasta /data/reference_genome/hg38/hg38.fa \ 
     --run_both_methods \
     --gtf_file /data/Homo_sapiens.GRCh38.104.gtf \
     --refseq_file /data/hg19_RefSeq.bed.gz \
-    --outdir Results/TwistNext_both 
+    --outdir Results/TwistMethNext_both 
 
 
 # if you already have the bisulfite genome index, --bismark_index
 
-nextflow run JD2112/TwistNext \
+nextflow run JD2112/TwistMethNext \
     -profile singularity \
     --sample_sheet Sample_sheet_twist.csv \
     --bismark_index /data/reference_genome/hg38/ \ 
     --run_both_methods \
     --gtf_file /data/Homo_sapiens.GRCh38.104.gtf \
     --refseq_file /data/hg19_RefSeq.bed.gz \    
-    --outdir /mnt/Results/TwistNext_both
+    --outdir /mnt/Results/TwistMethNext_both
 ```
 
 
@@ -80,24 +80,24 @@ nextflow run JD2112/TwistNext \
 ```
 # when using the reference genome indexing, --genome_fasta
 
-nextflow run JD2112/TwistNext \
+nextflow run JD2112/TwistMethNext \
     -profile singularity \
     --sample_sheet Sample_sheet_twist.csv \
     --genome_fasta /data/reference_genome/hg38/hg38.fa \ 
     --diff_meth_method edger \
     --refseq_file /data/hg19_RefSeq.bed.gz \
-    --outdir Results/TwistNext_edgeR 
+    --outdir Results/TwistMethNext_edgeR 
 
 
 # if you already have the bisulfite genome index, --bismark_index
 
-nextflow run JD2112/TwistNext \
+nextflow run JD2112/TwistMethNext \
     -profile singularity \
     --sample_sheet Sample_sheet_twist.csv \
     --bismark_index /data/reference_genome/hg38/ \ 
     --diff_meth_method edger \
     --refseq_file /data/hg19_RefSeq.bed.gz \
-    --outdir /mnt/Results/TwistNext_edgeR 
+    --outdir /mnt/Results/TwistMethNext_edgeR 
 ```
 
 ### `--diff_meth_method` MethylKit
@@ -105,24 +105,24 @@ nextflow run JD2112/TwistNext \
 ```
 # when using the reference genome indexing, --genome_fasta
 
-nextflow run JD2112/TwistNext \
+nextflow run JD2112/TwistMethNext \
     -profile singularity \
     --sample_sheet Sample_sheet_twist.csv \
     --genome_fasta /data/reference_genome/hg38/hg38.fa \ 
     --diff_meth_method methylkit \
     --gtf_file /data/Homo_sapiens.GRCh38.104.gtf \
-    --outdir Results/TwistNext_methylKit 
+    --outdir Results/TwistMethNext_methylKit 
 
 
 # if you already have the bisulfite genome index, --bismark_index
 
-nextflow run JD2112/TwistNext \
+nextflow run JD2112/TwistMethNext \
     -profile singularity \
     --sample_sheet Sample_sheet_twist.csv \
     --bismark_index /data/reference_genome/hg38/ \ 
     --diff_meth_method methylkit \
     --gtf_file /data/Homo_sapiens.GRCh38.104.gtf \
-    --outdir Results/TwistNext_methylKit 
+    --outdir Results/TwistMethNext_methylKit 
 ```
 ## Options:
 --------
@@ -153,9 +153,9 @@ nextflow run JD2112/TwistNext \
 ## HELP
 
 ```
-nextflow run JD2112/TwistNext --help --outdir .
+nextflow run JD2112/TwistMethNext --help --outdir .
 ```
-Find the details on the [manual](https://jyotirmoys-organization.gitbook.io/twistnext)
+Find the details on the [manual](https://jyotirmoys-organization.gitbook.io/TwistMethNext)
 
 ## Credits
 - Main Author: 
@@ -167,17 +167,17 @@ Find the details on the [manual](https://jyotirmoys-organization.gitbook.io/twis
 
 ## Citation
 
-Das, J. (2024). TwistNext (v1.0.0). Zenodo. [https://doi.org/10.5281/zenodo.14204261](https://doi.org/10.5281/zenodo.14204261)
+Das, J. (2024). TwistMethNext (v1.0.0). Zenodo. [https://doi.org/10.5281/zenodo.14204261](https://doi.org/10.5281/zenodo.14204261)
 
 ## HELP/FAQ/Troubleshooting
 
-Please check the [manual](https://jyotirmoys-organization.gitbook.io/twistnext) for details.
+Please check the [manual](https://jyotirmoys-organization.gitbook.io/TwistMethNext) for details.
 
-Please create [issues](https://github.com/JD2112/TwistNext/issues) on github.
+Please create [issues](https://github.com/JD2112/TwistMethNext/issues) on github.
 
 ## License(s)
 
-[GNU-3 public license](https://github.com/JD2112/TwistNext/blob/v1.0.3/LICENSE).
+[GNU-3 public license](https://github.com/JD2112/TwistMethNext/blob/v1.0.3/LICENSE).
 
 ## Acknowledgement
 
