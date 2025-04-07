@@ -2,6 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/490592846.svg)](https://doi.org/10.5281/zenodo.14204261)
 [![GitBook Docs](https://img.shields.io/badge/docs-GitBook-blue?logo=gitbook)](https://jyotirmoys-organization.gitbook.io/TwistMethNext)
+[![build-docs](https://github.com/JD2112/TwistMethNext/actions/workflows/build-docs.yml/badge.svg?branch=main)](https://github.com/JD2112/TwistMethNext/actions/workflows/build-docs.yml)
 [![GitHub Invite Collaborators](https://img.shields.io/badge/Invite-Collaborators-blue?style=for-the-badge&logo=github)](https://github.com/JD2112/TwistMethNext/settings/access)
 
 [![wakatime](https://wakatime.com/badge/user/fe95275f-909a-4147-a45d-624981173898/project/a44415f0-a274-4c3b-a59a-f8e1067c0fc1.svg)](https://wakatime.com/badge/user/fe95275f-909a-4147-a45d-624981173898/project/a44415f0-a274-4c3b-a59a-f8e1067c0fc1)
@@ -58,7 +59,7 @@ nextflow run JD2112/TwistMethNext \
     --genome_fasta /data/reference_genome/hg38/hg38.fa \ 
     --run_both_methods \
     --gtf_file /data/Homo_sapiens.GRCh38.104.gtf \
-    --refseq_file /data/hg19_RefSeq.bed.gz \
+    --refseq_file /data/hg38_RefSeq.bed.gz \
     --outdir Results/TwistMethNext_both 
 
 
@@ -70,12 +71,12 @@ nextflow run JD2112/TwistMethNext \
     --bismark_index /data/reference_genome/hg38/ \ 
     --run_both_methods \
     --gtf_file /data/Homo_sapiens.GRCh38.104.gtf \
-    --refseq_file /data/hg19_RefSeq.bed.gz \    
+    --refseq_file /data/hg38_RefSeq.bed.gz \    
     --outdir /mnt/Results/TwistMethNext_both
 ```
 
 
-### `--diff_meth_method` EdgeR
+### `--diff_meth_method`: EdgeR
 
 ```
 # when using the reference genome indexing, --genome_fasta
@@ -85,7 +86,7 @@ nextflow run JD2112/TwistMethNext \
     --sample_sheet Sample_sheet_twist.csv \
     --genome_fasta /data/reference_genome/hg38/hg38.fa \ 
     --diff_meth_method edger \
-    --refseq_file /data/hg19_RefSeq.bed.gz \
+    --refseq_file /data/hg38_RefSeq.bed.gz \
     --outdir Results/TwistMethNext_edgeR 
 
 
@@ -96,11 +97,11 @@ nextflow run JD2112/TwistMethNext \
     --sample_sheet Sample_sheet_twist.csv \
     --bismark_index /data/reference_genome/hg38/ \ 
     --diff_meth_method edger \
-    --refseq_file /data/hg19_RefSeq.bed.gz \
+    --refseq_file /data/hg38_RefSeq.bed.gz \
     --outdir /mnt/Results/TwistMethNext_edgeR 
 ```
 
-### `--diff_meth_method` MethylKit
+### `--diff_meth_method`: MethylKit
 
 ```
 # when using the reference genome indexing, --genome_fasta
@@ -125,7 +126,7 @@ nextflow run JD2112/TwistMethNext \
     --outdir Results/TwistMethNext_methylKit 
 ```
 ## Options:
---------
+
 | options | Description |
 |--------|-----------------------------------------------------------|
 | `--sample_sheet`       | Path to the sample sheet CSV file (required) |                                           
@@ -155,7 +156,7 @@ nextflow run JD2112/TwistMethNext \
 ```
 nextflow run JD2112/TwistMethNext --help --outdir .
 ```
-Find the details on the [manual](https://jyotirmoys-organization.gitbook.io/TwistMethNext)
+Find the details on the [manual](https://jd2112.github.io/TwistMethNext/)
 
 ## Credits
 - Main Author: 
@@ -171,7 +172,7 @@ Das, J. (2024). TwistMethNext (v1.0.0). Zenodo. [https://doi.org/10.5281/zenodo.
 
 ## HELP/FAQ/Troubleshooting
 
-Please check the [manual](https://jyotirmoys-organization.gitbook.io/TwistMethNext) for details.
+Please check the [manual](https://jd2112.github.io/TwistMethNext/) for details.
 
 Please create [issues](https://github.com/JD2112/TwistMethNext/issues) on github.
 
@@ -181,4 +182,4 @@ Please create [issues](https://github.com/JD2112/TwistMethNext/issues) on github
 
 ## Acknowledgement
 
-We would like to acknowledge the **Core Facility, Faculty of Medicine and Health Sciences, Linköping University, Linköping, Sweden** and **Clinical Genomics Linköping, Science for Life Laboratory, Sweden** for their support. We are grateful to PDC (KTH, Sweden) support for computational support to test and validate the pipeline on the Dardel HPC.
+We would like to acknowledge the **Core Facility, Faculty of Medicine and Health Sciences, Linköping University, Linköping, Sweden** and **Clinical Genomics Linköping, Science for Life Laboratory, Sweden** for their support. We are grateful to **PDC (KTH, Sweden)** support for computational support to test and validate the pipeline on the *Dardel* HPC.
