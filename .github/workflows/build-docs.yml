@@ -38,6 +38,9 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
+      - name: Inject current year into mkdocs.yml
+        run: python update_year.py
+        
       - name: Cache mkdocs builds
         uses: actions/cache@v3
         with:
