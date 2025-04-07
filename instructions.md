@@ -30,3 +30,15 @@ gh-pages/
 
 
 ## update gh-pages
+# Commit your changes
+git add .
+git commit -m "Update docs for v1.0.3"
+
+# Deploy docs as version v1.0.3 and mark as 'latest'
+mike deploy --update-aliases v1.0.3 latest
+
+# Set v1.0.3 as the default version shown in the dropdown
+mike set-default v1.0.3
+
+# Push the generated site to GitHub
+git push origin gh-pages
