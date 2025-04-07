@@ -12,3 +12,4 @@ data/*.gz
 protocols/
 nf-results/
 files-dump/
+instructions.md

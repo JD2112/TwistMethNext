@@ -1,14 +1,26 @@
 site_name: TwistMethNext
 site_description: A Nextflow-based DNA Methylation Data Analysis Pipeline for Twist NGS data
-site_author: JD2112
+site_author: Jyotirmoy Das
 repo_url: https://github.com/JD2112/TwistMethNext
 edit_uri: ""
 
 theme:
   name: material
+  custom_dir: docs/overrides
+  palette:
+    primary: blue grey
+    accent: blue
+  font:
+    text: Inter
+    code: Fira Code
   features:
     - navigation.instant
+    - navigation.tracking
+    - navigation.expand
     - navigation.sections
+    - navigation.top
+    - content.code.annotate
+    - content.tabs.link
     - navigation.tabs
     - search.suggest
     - search.highlight
@@ -16,8 +28,6 @@ theme:
     - content.action.edit
     - content.code.copy
     - versioning  # ← version dropdown
-  palette:
-    scheme: default
 
 plugins:
   - search
@@ -25,39 +35,10 @@ plugins:
 
 nav:
   - Home: index.md
-  - Overview: overview.md
-  - Highlights: highlights.md
-  - Usage:
-      - Overview: usage/README.md
-      - Requirements: usage/requirements.md
-      - Run Command: usage/run-command.md
-      - Input File: usage/input-file.md
-      - Parameters Configuration: usage/parameters-configuration.md
-      - Bismark Alignment: usage/bismark-alignment-with-bowtie2.md
-      - Other Configurations: usage/other-configurations.md
-      - Results: usage/results.md
-  - Description:
-      - Overview: description/README.md
-      - Read Processing:
-          - Overview: description/read-processing/README.md
-          - FastQC: description/read-processing/fastqc.md
-          - Trim Galore: description/read-processing/trim-galore.md
-      - QC Reporting: description/qc-reporting.md
-      - Quality Mapping: description/quality-mapping.md
-      - Genome Preparation: description/genome-preparation.md
-      - Bismark Analysis:
-          - Overview: description/bismark-analysis/README.md
-          - Alignment: description/bismark-analysis/bismark-alignment.md
-          - Deduplication: description/bismark-analysis/bismark-deduplication.md
-          - Methylation Extractor: description/bismark-analysis/bismark-methylation-extractor.md
-          - Report: description/bismark-analysis/bismark-report.md
-      - Post Processing: description/post-processing.md
-      - Differential Methylation:
-          - Overview: description/differential-methylation/README.md
-          - edgeR: description/differential-methylation/edger.md
-          - methylKit: description/differential-methylation/methylkit.md
-      - Gene Ontology Analysis: description/gene-ontology-analysis.md
+  - Description: overview.md
+  - Usage: usage.md
   - Credits: credits.md
+  - References: references.md
 
 markdown_extensions:
   - admonition
@@ -78,8 +59,11 @@ markdown_extensions:
 extra:
   version:
     provider: mike
-  social:
-    - icon: fontawesome/solid/user
-      link: https://github.com/JD2112
-      name: Jyotirmoy Das
-  footer: "© Jyotirmoy Das"
+  current_year: !!python/object/apply:str ["2025"]
+
+extra_css:
+  - styles/extra.css
+
+extra_javascript:
+  - https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:wght@400;600&display=swap
+

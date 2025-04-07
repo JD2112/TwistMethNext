@@ -27,3 +27,6 @@ gh-pages/
 ├── 1.0/
 ├── index.html  ← redirect to latest
 └── versions.json
+
+
+## update gh-pages
