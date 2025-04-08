@@ -1,6 +1,6 @@
 FROM continuumio/miniconda3:4.10.3
 LABEL authors="Jyotirmoy Das" \
-      description="Docker image containing all requirements for TwistNext pipeline"
+      description="Docker image containing all requirements for TwistMethNext pipeline"
 # Set working directory
 WORKDIR /app
 

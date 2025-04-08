@@ -1,4 +1,4 @@
-name: twistnext
+name: twistmethnext
 channels:
   - conda-forge
   - bioconda
