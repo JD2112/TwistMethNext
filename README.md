@@ -163,8 +163,7 @@ Find the details on the [manual](https://jd2112.github.io/TwistMethNext/)
     - Jyotirmoy Das ([@JD2112](https://github.com/JD2112))
 
 - Collaborators:
-    - Debojyoti Das ([@BioDebojyoti](https://github.com/BioDebojyoti))
-    - Leila Nasirzadeh ([@Lailanasd](https://github.com/Leilanasd))
+    - Debojyoti Das ([@BioDebojyoti](https://github.com/BioDebojyoti))    
 
 ## Citation
 
