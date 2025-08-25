@@ -27,7 +27,8 @@ theme:
     - toc.integrate
     - content.action.edit
     - content.code.copy
-    - versioning  # ← version dropdown
+    - versioning
+    - icons
 
 plugins:
   - search
@@ -37,24 +38,30 @@ nav:
   - Home: index.md
   - Description: overview.md
   - Usage: usage.md
-  - Credits: credits.md
+  - FAQs: faqs.md
   - References: references.md
 
 markdown_extensions:
   - admonition
-  - codehilite
-  - toc:
-      permalink: true
-  - pymdownx.details
-  - pymdownx.superfences
+  - abbr
+  - attr_list  
+  - pymdownx.details  
   - pymdownx.tabbed
   - pymdownx.highlight
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.emoji
-
-# extra_css:
-#   - styles.css
+  - pymdownx.extra
+  - pymdownx.arithmatex:
+      generic: true
+  - codehilite
+  - toc:
+      permalink: true     
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
 extra:
   version:
@@ -66,4 +73,4 @@ extra_css:
 
 extra_javascript:
   - https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:wght@400;600&display=swap
-
+  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML
