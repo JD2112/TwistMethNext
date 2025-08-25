@@ -16,5 +16,6 @@ instructions.md
 *.bak
 update_repo_mike.sh
 update_repo_mike2.sh
+update_repo_mike3.sh
 # MkDocs build directory
 /site/
