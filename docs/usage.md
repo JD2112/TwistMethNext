@@ -20,14 +20,14 @@ The pipeline needs to use NextFlow, Singularity/Docker/Conda (for container). De
 ## Run NextFlow
 
 ```
-nextflow run JD2112/TwistMethNext \
+nextflow run JD2112/TwistMethylFlow \
     -profile singularity \
     --sample_sheet Sample_sheet_twist.csv \
     --genome_fasta /data/reference_genome/hg38/hg38.fa \ 
     --run_both_methods \
     --gtf_file /data/Homo_sapiens.GRCh38.104.gtf \
     --refseq_file /data/hg38_RefSeq.bed.gz \
-    --outdir Results/TwistMethNext_both 
+    --outdir Results/TwistMethylFlow_both 
 ```
 
 ??? info "additional options"

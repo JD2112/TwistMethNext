@@ -1,7 +1,7 @@
-site_name: TwistMethNext
+site_name: TwistMethylFlow
 site_description: A Nextflow-based DNA Methylation Data Analysis Pipeline for Twist NGS data
 site_author: Jyotirmoy Das
-repo_url: https://github.com/JD2112/TwistMethNext
+repo_url: https://github.com/JD2112/TwistMethylFlow
 edit_uri: ""
 
 theme:

@@ -1,4 +1,4 @@
-TwistMethNext integrates various tools and custom scripts to provide a comprehensive analysis workflow for Twist NGS Methylation data.
+TwistMethylFlow integrates various tools and custom scripts to provide a comprehensive analysis workflow for Twist NGS Methylation data.
 
 | Step                      | Tool/Software                                                                                                                                                | Description                                                                                  |
 |---------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|

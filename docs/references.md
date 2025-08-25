@@ -1,7 +1,7 @@
 # Citations
 
-### TwistMethNext
->**Das, J.** (2024). *TwistMethNext (v1.0.0)*. Zenodo.  [https://doi.org/10.5281/zenodo.14204261](https://doi.org/10.5281/zenodo.14204261)
+### TwistMethylFlow
+>**Das, J.** (2024). *TwistMethylFlow (v1.0.0)*. Zenodo.  [https://doi.org/10.5281/zenodo.14204261](https://doi.org/10.5281/zenodo.14204261)
 
 ## Pipeline tools
 
