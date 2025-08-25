@@ -14,3 +14,7 @@ nf-results/
 files-dump/
 instructions.md
 *.bak
+update_repo_mike.sh
+update_repo_mike2.sh
+# MkDocs build directory
+/site/
