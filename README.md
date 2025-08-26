@@ -1,4 +1,4 @@
-![](artworks/twistmethnext.png)
+![](artworks/twistmethylflow.png)
 
 [![DOI](https://zenodo.org/badge/490592846.svg)](https://doi.org/10.5281/zenodo.14204261)
 [![GitBook Docs](https://img.shields.io/badge/docs-GitBook-blue?logo=gitbook)](https://jyotirmoys-organization.gitbook.io/TwistMethylFlow)
@@ -33,7 +33,7 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 
 
 ## Pipeline Schema
-![](artworks/TN.png)
+![](artworks/TNF.png)
 
 ## Requirements
 
@@ -48,7 +48,7 @@ This Nextflow pipeline is designed for the analysis of Twist NGS Methylation dat
 
 3. User can also use `--skip_diff_meth` to avoid the differential methylation analysis.
 
-### `--run_both_methods`
+### `--run_both_methods` (default: true)
 
 ```
 # when using the reference genome indexing, --genome_fasta
@@ -125,16 +125,20 @@ nextflow run JD2112/TwistMethylFlow \
     --gtf_file /data/Homo_sapiens.GRCh38.104.gtf \
     --outdir Results/TwistMethylFlow_methylKit 
 ```
+
+> [!TIP] "demo data check"
+> Demo data runs with `hg19` reference genome. Rememeber to update the GTF/Refseq file accordingly
+
 ## Options:
 
 | options | Description |
 |--------|-----------------------------------------------------------|
-| `--sample_sheet`       | Path to the sample sheet CSV file (required) |                                           
+| `--sample_sheet`       | Path to the sample sheet CSV file (**required**) |                                           
 | `--bismark_index`      | Path to the Bismark index directory (required unless `--genome` or `--aligned_bams` is provided) |
 | `--genome`             | Path to the reference genome FASTA file (required if `--bismark_index` not provided)| 
 | `--aligned_bams`       | Path to aligned BAM files (use this to start from aligned BAM files instead of FASTQ files) |
-| `--refseq_file`        | Path to RefSeq file for annotation (reuired to run `both` or `methylkit`)  |
-| `--gtf_file`           | Path to GTF file for annotation (reuired to run `both` or `edger`)  |
+| `--refseq_file`        | Path to RefSeq file for annotation (**reuired** to run `both` or `methylkit`)  |
+| `--gtf_file`           | Path to GTF file for annotation (**reuired** to run `both` or `edger`)  |
 | `--outdir`             | Output directory (default: ./results) |
 | `--diff_meth_method`   | Differential methylation method to use: 'edger' or 'methylkit' (default: edger) | 
 | `--run_both_methods`   | Run both edgeR and methylkit for differential methylation analysis (default: false) | 

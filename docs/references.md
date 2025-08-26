@@ -64,7 +64,7 @@
 >Kurtzer GM, Sochat V, Bauer MW. Singularity: Scientific containers for mobility of compute. PLoS One. 2017 May 11;12(5):e0177459. doi: 10.1371/journal.pone.0177459. eCollection 2017. PubMed PMID: 28494014; PubMed Central PMCID: PMC5426675.
 
 ---
-
+<!-- 
 ## 👤 Authors and Maintainers
 
 | Role         | Name & Link                                                                 | Description                                                                                      |
@@ -73,7 +73,7 @@
 | **Maintainer**  | [Jyotirmoy Das](https://github.com/JD2112)                                  | Actively maintaining the pipeline, fixing bugs, and implementing new features.                  |
 | **Contributors**| [All Contributors](https://github.com/JD2112/TwistMethylFlow/pulls)           | Thanks to everyone who helped in development, testing, and enhancement. Contributions welcome!  |
 
----
+--- -->
 
 ## 📄 Citation
 
@@ -83,12 +83,6 @@ If you use **TwistMethylFlow** in your work, please cite:
 
 ---
 
-## ❓ Help, FAQ, Troubleshooting
-
-- Refer to the [User Manual](index.md) for detailed usage instructions and guidance.
-- For bug reports, questions, or feature requests, please open an [issue on GitHub](https://github.com/JD2112/TwistMethylFlow/issues).
-
----
 
 ## 📜 License
 

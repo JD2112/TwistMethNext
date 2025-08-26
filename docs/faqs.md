@@ -99,3 +99,32 @@
     - [Hello Nextflow Training](https://training.nextflow.io/2.0/hello_nextflow/)
 
 
+---
+## Performance
+### Runtime, Memory, and Storage
+??? question "What are the typical runtime, memory, and storage requirements?"
+    - **Runtime**: Varies based on dataset size and computational resources. For 24 paired-end samples, it can take several hours to days.
+    - **Memory**: Ranges from 6 GB to 200 GB depending on the step. Alignment and differential methylation analysis are more memory-intensive.
+    - **Storage**: Approximately 2 TB for 24 paired-end samples, including intermediate files and results.
+    
+    | Process                       | Average Process Time | Average Wall Clock Time | Max Peak Memory | Total I/O (Read + Written) |
+    |-------------------------------|----------------------|-------------------------|-----------------|----------------------------|
+    | FastQC                        | 7m 3s                | 7m 2s                   | 628.4 MB        | 5.3 GB                     |
+    | trim galore                   | 22m 1s               | 22m 0s                  | 348.2 MB        | 165.2 GB                   |
+    | Bismark Genome Preparation    | 2h 24m 38s           | 2h 24m 37s              | 12.8 GB         | 47.8 GB                    |
+    | Bismark Alignment             | 14h 27m 57s          | 14h 27m 56s             | 10.2 GB         | 229.8 GB                   |
+    | Bismark Deduplication         | 29m 3s               | 29m 1s                  | 9.8 GB          | 95.8 GB                    |
+    | Samtools sort                 | 8m 32s               | 8m 31s                  | 3.3 GB          | 14.8 GB                    |
+    | Samtools index                | 1m 2s                | 1m 1s                   | 21.1 MB         | 4.8 GB                     |
+    | Bismark Methylation extractor | 2h 56m 23s           | 2h 56m 22s              | 2 GB            | 258.4 GB                   |
+    | Qualimap                      | 6m 29s               | 6m 29s                  | 12.1 GB         | 4.7 GB                     |
+    | Bismark report                | 2.9s                 | 2.5s                    | 161.1 MB        | 7.1 MB                     |
+    | Multiqc                       | 14.1s                | 13.3s                   | 80.5 MB         | 3.0 GB                     |
+    | EdgeR analysis                | 46m 37s              | 46m 36s                 | 44.9 GB         | 8.9 GB                     |
+    | Annotate results              | 5m 23s               | 5m 23s                  | 6.8 GB          | 1.8 GB                     |
+    | GO analysis EdgeR             | 4m 15s               | 4m 15s                  | 6.4 GB          | 1.8 GB                     |
+    | Post processing EdgeR         | 18m 40s              | 18m 40s                 | 9.3 GB          | 7.3 GB                     |
+    | MethylKit analysis            | 2h 59m 19s           | 2h 59m 19s              | 37.6 GB         | 9.0 GB                     |
+    | GO analysis methylKit         | 1m 44s               | 1m 44s                  | 3.9 GB          | 1.3 GB                     |
+    | Post processing methylKit     | 8m 4s                | 8m 3s                   | 4.4 GB          | 3.5 GB                     |
+

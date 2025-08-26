@@ -42,14 +42,14 @@ TwistMethylFlow integrates various tools and custom scripts to provide a compreh
   * generates a **Chord diagram** for top 10 results from the GO analysis.
 
 
-# Read processing
+### 1. Read processing
 
 Read processing subworkflow includes -&#x20;
 
 * FASTQC - for Quality check of samples
 * TRIM Galore - adapter trimming
 
-## FastQC
+#### 1.1 FastQC
 
 **FASTQC** is a widely used tool for assessing the quality of raw and processed sequencing data. It provides a comprehensive quality check, including metrics like per-base quality scores, GC content, and adapter contamination.
 
@@ -83,7 +83,7 @@ fastqc $args --threads $task.cpus $reads
     * Identifies frequently occurring sequences (e.g., adapters or contaminants).
 
 
-## Trim Galore
+#### 1.2 Trim Galore
 
 **Trim Galore** is a versatile tool for trimming sequencing reads and removing adapter sequences. It’s particularly useful for preparing raw sequencing data for downstream applications like alignment or differential expression/methylation analysis. Trim Galore combines the functionalities of **Cutadapt** and **FastQC** for quality control and trimming.
 
@@ -100,9 +100,9 @@ trim_galore --paired --cores $task.cpus $args $reads
 * `--fastqc`: Run **FastQC** before and after trimming.
 * `--cores <number>`: Use multiple cores for faster processing.
 
-# Bismark Analysis
+### 2. Bismark Analysis
 
-## Reference Genome Preparation
+#### 2.1 Reference Genome Preparation
 
 Bismark needs to prepare the bisulfite index for the genome.
 
@@ -137,7 +137,7 @@ bismark_genome_preparation --bowtie2 --parallel 4 <genome.fasta>
             ...
     ```
 
-## Bismark Alignment
+#### 2.2 Bismark Alignment
 
 This step aligns bisulfite-treated sequencing reads to a reference genome.
 
@@ -155,7 +155,7 @@ bismark --genome <path_to_reference_genome> -1 <reads_R1.fq> -2 <reads_R2.fq> -o
   * Produces `.report.txt`  and
   * `unmapped_reads.fq.gz` file.
 
-## Bismark Deduplication
+#### 2.3 Bismark Deduplication
 This step removes duplicate reads to avoid overestimating methylation levels.
 
 ```
@@ -172,7 +172,7 @@ deduplicate_bismark ${paired_end} $args --bam $bam
   * Produces `deduplicated_report.txt` file.
 
 
-## Bismark Methylation Extractor
+#### 2.4 Bismark Methylation Extractor
 
 Extract methylation data from deduplicated BAM files.
 
@@ -192,7 +192,7 @@ bismark_methylation_extractor \
   * Also generates `splitting_report.txt` file.
 
 
-## Bismark Report
+#### 2.5 Bismark Report
 Generate a summary report of alignment and methylation statistics.
 
 **Command:**
@@ -207,7 +207,7 @@ bismark2report
         * Duplicate rates.
         * Methylation levels (CpG, CHG, CHH contexts).
 
-# Alignment Quality Mapping
+### 3. Alignment Quality Mapping
 
 The main module for assessing alignment quality is `qualimap bamqc`.
 
@@ -242,7 +242,7 @@ qualimap bamqc \
        * Distribution of mapping quality scores.
 
 
-# QC Reporting
+### 4. QC Reporting
 
 _MultiQC_ is used for the QC reporting combining all results from the _FastQC, Trim galore, Bismark Alignment, Bismark Deduplication, Bismark summary report,_ and _Qualimap results._
 
@@ -251,13 +251,13 @@ _MultiQC_ is used for the QC reporting combining all results from the _FastQC, T
 * Generates an interactive HTML report (`multiqc_report.html`) and a data file (`multiqc_data.json`).
 * Output includes summary statistics, plots, and tool-specific metrics.
 
-# Differential Methylation Analysis
+### 5. Differential Methylation Analysis
 To calculate the differential methylation from the input samples, two different methods can be used -&#x20;
 
 * [EdgeR](#edger) (Default) or
 * [MethylKit](#methylkit)
 
-## EdgeR
+#### 5.1 EdgeR
 
 **edgeR** is a Bioconductor package primarily used for RNA-seq differential expression analysis but can also handle differential methylation analysis when paired with bisulfite sequencing data. This requires pre-processed methylation data, such as counts of methylated (`M`) and unmethylated (`U`) reads at each cytosine position or region of interest.
 
@@ -280,7 +280,7 @@ Rscript $baseDir/bin/edgeR_analysis.R \
     * Generates `EdgeR_group_<compare_str>.csv`.
 
 
-## MethylKit
+#### 5.2 MethylKit
 **MethylKit** is an R package designed for analyzing bisulfite sequencing data, particularly for differential methylation analysis. It supports genome-wide methylation data and is ideal for CpG, CHH, and CHG methylation studies.
 
 ```
@@ -301,7 +301,7 @@ Rscript $baseDir/bin/run_methylkit.R \
 ??? note "MethylKit Results"
     * Generates `Methylkit_group_<compare_str>.csv` 
 
-# Post-processing
+### 6. Post-processing
 
 Generates A) **Volcano Plot,** B) **MA Plot** and C) **Summary Statistics** from the Diffrential Methylation results.
 
@@ -313,7 +313,7 @@ Generates A) **Volcano Plot,** B) **MA Plot** and C) **Summary Statistics** from
     ![MA plot](./images/ma_plot.png)
 
 
-# Gene Ontology Analysis
+### 7. Gene Ontology Analysis
 The pipeline has also a module to perform the Gene Ontology analysis from the top `n` corresponding genes from the differential methylation results (EdgeR/MethylKit) using the _clusterProfiler_ package.
 
 The results generates a full table with all _Biological Processes_ and a _Chord diagram_ with top 10 functions identified in the analysis.

@@ -12,7 +12,7 @@ The pipeline needs to use NextFlow, Singularity/Docker/Conda (for container). De
 * Java (>=8)
 
 ### Hardware Requirements
-- RAM: 6 GB - 200 GB
+- RAM: 12 GB - 200 GB
 - CPU: min. 12 cores
 - Storage: ~2TB for 24 paired-end samples
 
@@ -78,7 +78,8 @@ User can change the `conf/params.config` or use the `--` flags directly on nextf
 | `--nonsig_color`       | Non-significant color for Volcano or MA plot (default: black) |
 | `--compare_str`        | Comparison string for differential analysis (e.g. "Group1-Group2")  |
 | `--top_n_genes`        | Number of top differentially methylated genes to report for GOplot (default: 100) |
-| `--help`               | Show this help message and exit   | 
+| `--help`               | Show this help message and exit   |
+| `-r`                   | Run with `--tag` version from GitHub (e.g, `-r 1.0.5`)   | 
 
 
 ??? info "MethylKit specific parameters"
@@ -103,14 +104,20 @@ Sample sheet (CSV format) with sample information
 
 `Sample_sheet.csv`:
 
-| sample\_id | group   | read1                                 | read2                                 |
-| ---------- | ------- | ------------------------------------- | ------------------------------------- |
-| SN09       | Healthy | FASTQ/SN09/SL1\_S9\_R1\_001.fastq.gz  | FASTQ/SN09/SL1\_S9\_R2\_001.fastq.gz  |
-| SN10       | Disease | FASTQ/SN10/SL2\_S10\_R1\_001.fastq.gz | FASTQ/SN10/SL2\_S10\_R2\_001.fastq.gz |
-| SN11       | Healthy | FASTQ/SN11/SL3\_S11\_R1\_001.fastq.gz | FASTQ/SN11/SL3\_S11\_R2\_001.fastq.gz |
-| SN12       | Disease | FASTQ/SN12/SL4\_S12\_R1\_001.fastq.gz | FASTQ/SN12/SL4\_S12\_R2\_001.fastq.gz |
-| SN13       | Healthy | FASTQ/SN13/SL5\_S13\_R1\_001.fastq.gz | FASTQ/SN13/SL5\_S13\_R2\_001.fastq.gz |
-| SN14       | Disease | FASTQ/SN14/SL6\_S14\_R1\_001.fastq.gz | FASTQ/SN14/SL6\_S14\_R2\_001.fastq.gz |
+| sample_id | group | read1                                                  | read2                                                  |
+|-----------|-------|--------------------------------------------------------|--------------------------------------------------------|
+| 12A       | VD    | FASTQ/12A_S9_L001_R1_001.fastq.gz  | FASTQ/12A_S9_L001_R2_001.fastq.gz  |
+| 13A       | CS    | FASTQ/13A_S11_L001_R1_001.fastq.gz | FASTQ/13A_S11_L001_R2_001.fastq.gz |
+| 1A        | CS    | FASTQ/1A_S1_L001_R1_001.fastq.gz   | FASTQ/1A_S1_L001_R2_001.fastq.gz   |
+| 20A       | VD    | FASTQ/20A_S13_L001_R1_001.fastq.gz | FASTQ/20A_S13_L001_R2_001.fastq.gz |
+| 21A       | VD    | FASTQ/21A_S15_L001_R1_001.fastq.gz | FASTQ/21A_S15_L001_R2_001.fastq.gz |
+| 22A       | VD    | FASTQ/22A_S17_L001_R1_001.fastq.gz | FASTQ/22A_S17_L001_R2_001.fastq.gz |
+| 23A       | VD    | FASTQ/23A_S19_L001_R1_001.fastq.gz | FASTQ/23A_S19_L001_R2_001.fastq.gz |
+| 25A       | CS    | FASTQ/25A_S21_L001_R1_001.fastq.gz | FASTQ/25A_S21_L001_R2_001.fastq.gz |
+| 26A       | VD    | FASTQ/26A_S23_L001_R1_001.fastq.gz | FASTQ/26A_S23_L001_R2_001.fastq.gz |
+| 2A        | CS    | FASTQ/2A_S3_L001_R1_001.fastq.gz   | FASTQ/2A_S3_L001_R2_001.fastq.gz   |
+| 3A        | VD    | FASTQ/3A_S5_L001_R1_001.fastq.gz   | FASTQ/3A_S5_L001_R2_001.fastq.gz   |
+| 5A        | CS    | FASTQ/5A_S7_L001_R1_001.fastq.gz   | FASTQ/5A_S7_L001_R2_001.fastq.gz   |
 
 ## Results
 
@@ -147,3 +154,46 @@ Here is how the result folder looks like -
     | `--no-discordant`      | Prevents discordant alignments; enforces proper orientation and distance.   |
     | `--dovetail`           | Allows overlapping or extended alignments in paired-end reads.              |
     | `--maxins 500`         | Sets the maximum allowed distance between paired-end reads to 500 bases.    |
+
+??? tip "SLURM script to run the sample data on HPC cluster"
+    Here is an example SLURM script to run the pipeline on a HPC cluster with Singularity:
+
+    ```bash
+    #!/bin/bash    
+    #SBATCH --job-name=TMF_test
+    #SBATCH --partition=standard
+    #SBATCH --nodes=2
+    #SBATCH --mem=96G
+    #SBATCH --time=3-00:00:00  # 3 days (D-HH:MM:SS)
+    #SBATCH --cpus-per-task=16
+    #SBATCH --output=tmf_test%j.out
+    #SBATCH --error=tmf_test%j.err
+    #SBATCH --mail-user=jyotirmoy.das@liu.se  
+    #SBATCH --mail-type=BEGIN,END,FAIL 
+
+    set -e
+
+    # Load modules
+    module load singularity-4.1.1
+    module load nextflow-25.04.0
+
+    # Set Nextflow and Singularity directories
+    export NXF_HOME=<Your Nextflow home directory, e.g., /home/username/.nextflow >
+    export NXF_WORK=<Your Nextflow home directory, e.g., /home/username/nextflow_work>
+    export SINGULARITY_CACHEDIR=<Your Singularity cache directory, e.g., /home/username/singularity_cache>
+
+    # Ensure directories exist
+    mkdir -p $NXF_WORK $SINGULARITY_CACHEDIR
+
+
+    # Run Nextflow
+    nextflow run JD2112/TwistMethylFlow \
+        -profile singularity \
+        --sample_sheet samplesheet.csv \
+        --genome_fasta <ABSOLUTE\ PATH\ TO\>/reference_genome/hg19.fa \
+        --run_both_methods \
+        --refseq_file hg19_RefSeq.bed.gz \
+        --gtf_file Homo_sapiens.GRCh37.75.formatted.gtf \
+        --outdir TMF_250519 \
+        -with-dag
+    ```
