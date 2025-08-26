@@ -621,7 +621,7 @@
 </ul>
 <h3 id="hardware-requirements">Hardware Requirements<a class="headerlink" href="#hardware-requirements" title="Permanent link">&para;</a></h3>
 <ul>
-<li>RAM: 6 GB - 200 GB</li>
+<li>RAM: 12 GB - 200 GB</li>
 <li>CPU: min. 12 cores</li>
 <li>Storage: ~2TB for 24 paired-end samples</li>
 </ul>
@@ -741,6 +741,10 @@
 <td><code>--help</code></td>
 <td>Show this help message and exit</td>
 </tr>
+<tr>
+<td><code>-r</code></td>
+<td>Run with <code>--tag</code> version from GitHub (e.g, <code>-r 1.0.5</code>)</td>
+</tr>
 </tbody>
 </table>
 <details class="info">
@@ -773,40 +777,76 @@
 </thead>
 <tbody>
 <tr>
-<td>SN09</td>
-<td>Healthy</td>
-<td>FASTQ/SN09/SL1_S9_R1_001.fastq.gz</td>
-<td>FASTQ/SN09/SL1_S9_R2_001.fastq.gz</td>
+<td>12A</td>
+<td>VD</td>
+<td>FASTQ/12A_S9_L001_R1_001.fastq.gz</td>
+<td>FASTQ/12A_S9_L001_R2_001.fastq.gz</td>
 </tr>
 <tr>
-<td>SN10</td>
-<td>Disease</td>
-<td>FASTQ/SN10/SL2_S10_R1_001.fastq.gz</td>
-<td>FASTQ/SN10/SL2_S10_R2_001.fastq.gz</td>
+<td>13A</td>
+<td>CS</td>
+<td>FASTQ/13A_S11_L001_R1_001.fastq.gz</td>
+<td>FASTQ/13A_S11_L001_R2_001.fastq.gz</td>
 </tr>
 <tr>
-<td>SN11</td>
-<td>Healthy</td>
-<td>FASTQ/SN11/SL3_S11_R1_001.fastq.gz</td>
-<td>FASTQ/SN11/SL3_S11_R2_001.fastq.gz</td>
+<td>1A</td>
+<td>CS</td>
+<td>FASTQ/1A_S1_L001_R1_001.fastq.gz</td>
+<td>FASTQ/1A_S1_L001_R2_001.fastq.gz</td>
 </tr>
 <tr>
-<td>SN12</td>
-<td>Disease</td>
-<td>FASTQ/SN12/SL4_S12_R1_001.fastq.gz</td>
-<td>FASTQ/SN12/SL4_S12_R2_001.fastq.gz</td>
+<td>20A</td>
+<td>VD</td>
+<td>FASTQ/20A_S13_L001_R1_001.fastq.gz</td>
+<td>FASTQ/20A_S13_L001_R2_001.fastq.gz</td>
 </tr>
 <tr>
-<td>SN13</td>
-<td>Healthy</td>
-<td>FASTQ/SN13/SL5_S13_R1_001.fastq.gz</td>
-<td>FASTQ/SN13/SL5_S13_R2_001.fastq.gz</td>
+<td>21A</td>
+<td>VD</td>
+<td>FASTQ/21A_S15_L001_R1_001.fastq.gz</td>
+<td>FASTQ/21A_S15_L001_R2_001.fastq.gz</td>
 </tr>
 <tr>
-<td>SN14</td>
-<td>Disease</td>
-<td>FASTQ/SN14/SL6_S14_R1_001.fastq.gz</td>
-<td>FASTQ/SN14/SL6_S14_R2_001.fastq.gz</td>
+<td>22A</td>
+<td>VD</td>
+<td>FASTQ/22A_S17_L001_R1_001.fastq.gz</td>
+<td>FASTQ/22A_S17_L001_R2_001.fastq.gz</td>
+</tr>
+<tr>
+<td>23A</td>
+<td>VD</td>
+<td>FASTQ/23A_S19_L001_R1_001.fastq.gz</td>
+<td>FASTQ/23A_S19_L001_R2_001.fastq.gz</td>
+</tr>
+<tr>
+<td>25A</td>
+<td>CS</td>
+<td>FASTQ/25A_S21_L001_R1_001.fastq.gz</td>
+<td>FASTQ/25A_S21_L001_R2_001.fastq.gz</td>
+</tr>
+<tr>
+<td>26A</td>
+<td>VD</td>
+<td>FASTQ/26A_S23_L001_R1_001.fastq.gz</td>
+<td>FASTQ/26A_S23_L001_R2_001.fastq.gz</td>
+</tr>
+<tr>
+<td>2A</td>
+<td>CS</td>
+<td>FASTQ/2A_S3_L001_R1_001.fastq.gz</td>
+<td>FASTQ/2A_S3_L001_R2_001.fastq.gz</td>
+</tr>
+<tr>
+<td>3A</td>
+<td>VD</td>
+<td>FASTQ/3A_S5_L001_R1_001.fastq.gz</td>
+<td>FASTQ/3A_S5_L001_R2_001.fastq.gz</td>
+</tr>
+<tr>
+<td>5A</td>
+<td>CS</td>
+<td>FASTQ/5A_S7_L001_R1_001.fastq.gz</td>
+<td>FASTQ/5A_S7_L001_R2_001.fastq.gz</td>
 </tr>
 </tbody>
 </table>
@@ -870,6 +910,48 @@
 </tr>
 </tbody>
 </table>
+</details>
+<details class="tip">
+<summary>SLURM script to run the sample data on HPC cluster</summary>
+<p>Here is an example SLURM script to run the pipeline on a HPC cluster with Singularity:</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash    </span>
+<span class="c1">#SBATCH --job-name=TMF_test</span>
+<span class="c1">#SBATCH --partition=standard</span>
+<span class="c1">#SBATCH --nodes=2</span>
+<span class="c1">#SBATCH --mem=96G</span>
+<span class="c1">#SBATCH --time=3-00:00:00  # 3 days (D-HH:MM:SS)</span>
+<span class="c1">#SBATCH --cpus-per-task=16</span>
+<span class="c1">#SBATCH --output=tmf_test%j.out</span>
+<span class="c1">#SBATCH --error=tmf_test%j.err</span>
+<span class="c1">#SBATCH --mail-user=jyotirmoy.das@liu.se  </span>
+<span class="c1">#SBATCH --mail-type=BEGIN,END,FAIL </span>
+
+<span class="nb">set</span><span class="w"> </span>-e
+
+<span class="c1"># Load modules</span>
+module<span class="w"> </span>load<span class="w"> </span>singularity-4.1.1
+module<span class="w"> </span>load<span class="w"> </span>nextflow-25.04.0
+
+<span class="c1"># Set Nextflow and Singularity directories</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">NXF_HOME</span><span class="o">=</span>&lt;Your<span class="w"> </span>Nextflow<span class="w"> </span>home<span class="w"> </span>directory,<span class="w"> </span>e.g.,<span class="w"> </span>/home/username/.nextflow<span class="w"> </span>&gt;
+<span class="nb">export</span><span class="w"> </span><span class="nv">NXF_WORK</span><span class="o">=</span>&lt;Your<span class="w"> </span>Nextflow<span class="w"> </span>home<span class="w"> </span>directory,<span class="w"> </span>e.g.,<span class="w"> </span>/home/username/nextflow_work&gt;
+<span class="nb">export</span><span class="w"> </span><span class="nv">SINGULARITY_CACHEDIR</span><span class="o">=</span>&lt;Your<span class="w"> </span>Singularity<span class="w"> </span>cache<span class="w"> </span>directory,<span class="w"> </span>e.g.,<span class="w"> </span>/home/username/singularity_cache&gt;
+
+<span class="c1"># Ensure directories exist</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$NXF_WORK</span><span class="w"> </span><span class="nv">$SINGULARITY_CACHEDIR</span>
+
+
+<span class="c1"># Run Nextflow</span>
+nextflow<span class="w"> </span>run<span class="w"> </span>JD2112/TwistMethylFlow<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-profile<span class="w"> </span>singularity<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--sample_sheet<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--genome_fasta<span class="w"> </span>&lt;ABSOLUTE<span class="se">\ </span>PATH<span class="se">\ </span>TO<span class="se">\&gt;</span>/reference_genome/hg19.fa<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--run_both_methods<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--refseq_file<span class="w"> </span>hg19_RefSeq.bed.gz<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--gtf_file<span class="w"> </span>Homo_sapiens.GRCh37.75.formatted.gtf<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--outdir<span class="w"> </span>TMF_250519<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-with-dag
+</code></pre></div>
 </details>
 
 

@@ -626,6 +626,156 @@ This defines what data is saved for downstream steps or exported from the workfl
 <li><a href="https://training.nextflow.io/2.0/hello_nextflow/">Hello Nextflow Training</a></li>
 </ul>
 </details>
+<hr />
+<h2 id="performance">Performance<a class="headerlink" href="#performance" title="Permanent link">&para;</a></h2>
+<h3 id="runtime-memory-and-storage">Runtime, Memory, and Storage<a class="headerlink" href="#runtime-memory-and-storage" title="Permanent link">&para;</a></h3>
+<details class="question">
+<summary>What are the typical runtime, memory, and storage requirements?</summary>
+<ul>
+<li><strong>Runtime</strong>: Varies based on dataset size and computational resources. For 24 paired-end samples, it can take several hours to days.</li>
+<li><strong>Memory</strong>: Ranges from 6 GB to 200 GB depending on the step. Alignment and differential methylation analysis are more memory-intensive.</li>
+<li><strong>Storage</strong>: Approximately 2 TB for 24 paired-end samples, including intermediate files and results.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Process</th>
+<th>Average Process Time</th>
+<th>Average Wall Clock Time</th>
+<th>Max Peak Memory</th>
+<th>Total I/O (Read + Written)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FastQC</td>
+<td>7m 3s</td>
+<td>7m 2s</td>
+<td>628.4 MB</td>
+<td>5.3 GB</td>
+</tr>
+<tr>
+<td>trim galore</td>
+<td>22m 1s</td>
+<td>22m 0s</td>
+<td>348.2 MB</td>
+<td>165.2 GB</td>
+</tr>
+<tr>
+<td>Bismark Genome Preparation</td>
+<td>2h 24m 38s</td>
+<td>2h 24m 37s</td>
+<td>12.8 GB</td>
+<td>47.8 GB</td>
+</tr>
+<tr>
+<td>Bismark Alignment</td>
+<td>14h 27m 57s</td>
+<td>14h 27m 56s</td>
+<td>10.2 GB</td>
+<td>229.8 GB</td>
+</tr>
+<tr>
+<td>Bismark Deduplication</td>
+<td>29m 3s</td>
+<td>29m 1s</td>
+<td>9.8 GB</td>
+<td>95.8 GB</td>
+</tr>
+<tr>
+<td>Samtools sort</td>
+<td>8m 32s</td>
+<td>8m 31s</td>
+<td>3.3 GB</td>
+<td>14.8 GB</td>
+</tr>
+<tr>
+<td>Samtools index</td>
+<td>1m 2s</td>
+<td>1m 1s</td>
+<td>21.1 MB</td>
+<td>4.8 GB</td>
+</tr>
+<tr>
+<td>Bismark Methylation extractor</td>
+<td>2h 56m 23s</td>
+<td>2h 56m 22s</td>
+<td>2 GB</td>
+<td>258.4 GB</td>
+</tr>
+<tr>
+<td>Qualimap</td>
+<td>6m 29s</td>
+<td>6m 29s</td>
+<td>12.1 GB</td>
+<td>4.7 GB</td>
+</tr>
+<tr>
+<td>Bismark report</td>
+<td>2.9s</td>
+<td>2.5s</td>
+<td>161.1 MB</td>
+<td>7.1 MB</td>
+</tr>
+<tr>
+<td>Multiqc</td>
+<td>14.1s</td>
+<td>13.3s</td>
+<td>80.5 MB</td>
+<td>3.0 GB</td>
+</tr>
+<tr>
+<td>EdgeR analysis</td>
+<td>46m 37s</td>
+<td>46m 36s</td>
+<td>44.9 GB</td>
+<td>8.9 GB</td>
+</tr>
+<tr>
+<td>Annotate results</td>
+<td>5m 23s</td>
+<td>5m 23s</td>
+<td>6.8 GB</td>
+<td>1.8 GB</td>
+</tr>
+<tr>
+<td>GO analysis EdgeR</td>
+<td>4m 15s</td>
+<td>4m 15s</td>
+<td>6.4 GB</td>
+<td>1.8 GB</td>
+</tr>
+<tr>
+<td>Post processing EdgeR</td>
+<td>18m 40s</td>
+<td>18m 40s</td>
+<td>9.3 GB</td>
+<td>7.3 GB</td>
+</tr>
+<tr>
+<td>MethylKit analysis</td>
+<td>2h 59m 19s</td>
+<td>2h 59m 19s</td>
+<td>37.6 GB</td>
+<td>9.0 GB</td>
+</tr>
+<tr>
+<td>GO analysis methylKit</td>
+<td>1m 44s</td>
+<td>1m 44s</td>
+<td>3.9 GB</td>
+<td>1.3 GB</td>
+</tr>
+<tr>
+<td>Post processing methylKit</td>
+<td>8m 4s</td>
+<td>8m 3s</td>
+<td>4.4 GB</td>
+<td>3.5 GB</td>
+</tr>
+</tbody>
+</table>
+</details>
 
 
 
